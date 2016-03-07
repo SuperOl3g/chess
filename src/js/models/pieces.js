@@ -145,14 +145,105 @@ var Rook = Piece.extend({
 var Queen = Piece.extend({
   initialize: function () {
     this.attributes.type = "queen"
+  },
+
+  getVariants: function () {
+    var variants = [];
+
+    // диагонали
+    for (var i = 1, len = 7 - this.attributes.x ; i <= len; i++) {
+      var newX = this.attributes.x + i,
+          newY = this.attributes.y + i;
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+        break;
+    };
+
+    for (var i = 1, len = 7 - this.attributes.x ; i <= len; i++) {
+      var newX = this.attributes.x + i,
+          newY = this.attributes.y - i;
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+        break;
+    };
+
+    for (var i = 1, len = this.attributes.x ; i <= len; i++) {
+      var newX = this.attributes.x - i,
+          newY = this.attributes.y + i;
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+        break;
+    };
+
+    for (var i = 1, len = this.attributes.x ; i <= len; i++) {
+      var newX = this.attributes.x - i,
+          newY = this.attributes.y - i;
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+        break;
+    };
+
+    // прямые
+    for (var i = this.attributes.x + 1; i <= 7; i++) {
+      var newX = i,
+          newY = this.attributes.y;
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+        break;
+    }
+
+    for (var i = this.attributes.x - 1; i >= 0; i--) {
+      var newX = i,
+          newY = this.attributes.y;
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+        break;
+    }
+
+    for (var i = this.attributes.y + 1; i <= 7; i++) {
+      var newX = this.attributes.x,
+          newY = i;
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+        break;
+    }
+
+    for (var i = this.attributes.y - 1; i >= 0; i--) {
+      var newX = this.attributes.x ,
+          newY = i;
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+        break;
+    }
+
+    return variants;
   }
 });
 
 var King = Piece.extend({
   initialize: function () {
     this.attributes.type = "king"
+  },
+
+  getVariants: function () {
+    var variants = [];
+
+    var differences = [
+      {x:-1, y:-1},
+      {x:-1, y: 0},
+      {x:-1, y: 1},
+      {x: 0, y:-1},
+      {x: 0, y: 1},
+      {x: 1, y:-1},
+      {x: 1, y: 0},
+      {x: 1, y: 1}
+    ];
+
+    differences.forEach( (variant) => {
+      var newX = this.attributes.x + variant.x,
+          newY = this.attributes.y + variant.y;
+      if ( !addTargetPos(newX, newY, this.attributes.enemyCollection.models, variants) )
+        addValidPos(newX, newY, this.collection.models, variants);
+    });
+
+    return variants;
   }
 });
+
+
+// вспомогательные функции
 
 function isValidCoords(x, y) {
   return (x >= 0 && x<= 7 && y >= 0 && y <= 7)
