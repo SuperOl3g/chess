@@ -24,7 +24,7 @@ var PieceView = Backbone.View.extend({
     var self = this,
         $deck = $('.deck'),
         deckHeight =$deck.height(),
-        variants = this.model.getVariants(),
+        variants = this.model.getVariants(),            // TODO: кешировать вожможные варинты
         startCoords = self.$el.css(["left", "bottom"]),
         shiftX = e.pageX - parseInt(startCoords.left, 10),
         shiftY = deckHeight - e.pageY - parseInt(startCoords.bottom, 10);
@@ -40,8 +40,10 @@ var PieceView = Backbone.View.extend({
       return $(indicator);
     });
 
+    // отображаем индикаторы возможных ходов
     $deck.append($indicators);
 
+    // используем `тормозилку` вызова обработчиков onmousemove, чтобы разгрузить проц
     document.onmousemove = helpers.throttle(function(e) {
         self.$el.css({
           left: e.pageX - shiftX,
@@ -51,46 +53,28 @@ var PieceView = Backbone.View.extend({
         document.onmouseup = function (e) {
           document.onmousemove = null;
 
+          // убираем индикаторы возможных ходов
           $indicators.forEach( ($indicator) => {
             $indicator.remove();
           });
 
+          // определяем координаты поля на странице
           var deckOffset = $deck.offset();
           deckOffset.top += parseInt($deck.css('borderWidth'), 10);
           deckOffset.left += parseInt($deck.css('borderWidth'), 10);
 
+          // определяем над какой клеткой мы сейчас находимся
           var newX = Math.floor( (e.pageX - deckOffset.left) / TILE_SIZE),
               newY = Math.floor( (deckHeight - e.pageY + deckOffset.top) / TILE_SIZE);
 
 
-          if (!isOnValidPos()) {
+          if( !self.model.moveTo(newX, newY) ) {
+            // если позиция невалидна, возвращаем в исходное положение
             self.$el.css({
               left: startCoords.left,
               bottom: startCoords.bottom
             });
-          }
-          else {
-            self.model.save({
-              x: newX,
-              y: newY,
-              onStartPos: false
-            });
           };
-
-          function isOnValidPos() {
-            return variants.some( (pos) => {
-              if (pos.x==newX && pos.y == newY) {
-                if (pos.type == 'target')
-                  self.model.attributes.enemyCollection.models.some( (enemyPiece) => {
-                    if (enemyPiece.attributes.x == newX && enemyPiece.attributes.y == newY)
-                      enemyPiece.destroy();
-                  });
-                return true;
-              }
-              return false;
-              ;
-            } )
-          }
         }
       }, 1000 / FPS)
   },

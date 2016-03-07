@@ -7,11 +7,15 @@ window.Backbone = Backbone;
 
 var Pieces = require('./models/pieces'),
     PieceView = require('./views/piece'),
-    PieceCollection = require('./collections/pieceCollection');
+    PieceCollection = require('./collections/pieceCollection'),
+    LoggerView = require('./views/logger');
 
 (() => {
   var myPieceCollection    = new PieceCollection(),
-      enemyPieceCollection = new PieceCollection();
+      enemyPieceCollection = new PieceCollection(),
+      Logger               = new LoggerView(myPieceCollection, enemyPieceCollection);
+      
+    $("body").append(Logger.render().el);
 
   myPieceCollection.push([
     new Pieces.Pawn   ({x:0, y:1, color:'white', enemyCollection: enemyPieceCollection}),

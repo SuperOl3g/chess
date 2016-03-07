@@ -8,13 +8,55 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="deck"></div>
+  <div class="deck">
+    <div class="deck__row-titles">
+      <div class="deck__row-title">8</div>
+      <div class="deck__row-title">7</div>
+      <div class="deck__row-title">6</div>
+      <div class="deck__row-title">5</div>
+      <div class="deck__row-title">4</div>
+      <div class="deck__row-title">3</div>
+      <div class="deck__row-title">2</div>
+      <div class="deck__row-title">1</div>
+    </div>
+    <div class="deck__col-titles">
+      <div class="deck__col-title">A</div>
+      <div class="deck__col-title">B</div>
+      <div class="deck__col-title">C</div>
+      <div class="deck__col-title">D</div>
+      <div class="deck__col-title">E</div>
+      <div class="deck__col-title">F</div>
+      <div class="deck__col-title">G</div>
+      <div class="deck__col-title">H</div>
+    </div>
+  </div>
 
   <!-- templates -->
   <script type="text/template" id="pieceTemplate">
     <svg class="icon-piece">
       <use xlink:href="img/sprite.svg#<%= name %>"></use>
     </svg>
+  </script>
+
+  <script type="text/tempalte" id="logMsgTemplate--taking">
+    <div>
+      <span class="log__piece--<%= attacker.color %>">
+        <%= attacker.type %>(<%= NtoS(attacker.x) %><%= attacker.y + 1 %>)
+      </span>
+      take
+      <span class="log__piece--<%= target.color %>">
+        <%= target.type %>(<%= NtoS(target.x) %><%= target.y + 1 %>)
+      </span>
+    </div>
+  </script>
+
+  <script type="text/tempalte" id="logMsgTemplate--move">
+    <div>
+      <span class="log__piece--<%= piece.color %>">
+        <%= piece.type %>(<%= NtoS(piece.x) %><%= piece.y + 1 %>)
+      </span>
+      move to <b>(<%= NtoS(newCoords.x) %><%= newCoords.y + 1 %>)</b>
+    </div>
   </script>
 
 

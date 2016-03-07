@@ -5,9 +5,41 @@ $tile-size: 40px;
   height: 8*$tile-size;
   background: url("../img/back.jpg");
   position: relative;
-  border: 5px solid #FFCC9A;
-  outline: 15px solid #8F6050;
-  margin: 15px;
+  $innerline-width: 5px;
+  border: $innerline-width solid #FFCC9A;
+  $outline-width: 30px;
+  outline: $outline-width solid #8F6050;
+  margin: $outline-width;
+
+  &__col-titles {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translateY(100%);
+    display: table;
+    padding-top: $innerline-width + 7px;
+  }
+  &__col-title {
+    display: inline-block;
+    width: $tile-size;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  &__row-titles {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: table;
+    transform: translateX(-100%);
+    padding-right: $innerline-width + 10px;
+  }
+  &__row-title {
+    height: $tile-size;
+    line-height: $tile-size;
+    font-weight: bold;
+    display: table-row;
+  }
 }
 
 .tileIndicator {
@@ -42,4 +74,29 @@ $tile-size: 40px;
 .icon-piece {
   width: 100%;
   height: 100%;
+}
+
+.log {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 300px;
+  padding: 20px;
+
+  &__content {
+    height: 250px;
+    overflow: auto;
+  }
+  &__piece{
+    &--black {
+      color: black;
+      font-weight: 900;
+    }
+    &--white {
+      text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+      font-weight: bold;
+      color: white;
+    }
+  }
+
 }

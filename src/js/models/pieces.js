@@ -7,7 +7,36 @@ var Piece = Backbone.Model.extend({
     x: null,
     y: null,
     onStartPos: true
-    },
+  },
+
+  moveTo: function (newX, newY) {
+    // проверяем являются ли новые координаты валидными
+    return this.getVariants().some( (pos) => {
+      if (pos.x==newX && pos.y == newY) {
+        if (pos.type == 'target') {
+          // если ставим в клетку с чужой фигурой, ее надо удалить
+          this.attributes.enemyCollection.models.some( (enemyPiece) => {
+            if (enemyPiece.attributes.x == newX && enemyPiece.attributes.y == newY) {
+              enemyPiece.destroy();
+              this.trigger('taking', this, enemyPiece);
+              return true;
+            }
+            return false;
+          });
+        } else {
+          this.trigger('move', this, {x: newX, y: newY});
+        }
+        // если позиция валидна, обновляем координаты модели
+        this.save({
+          x: newX,
+          y: newY,
+          onStartPos: false
+        });
+        return true;
+      }
+      return false;
+    })
+  }
 });
 
 var Pawn = Piece.extend({
@@ -19,6 +48,9 @@ var Pawn = Piece.extend({
     var variants = [],
         deltaY= this.attributes.color == 'white'? 1 : -1;
 
+
+    //TODO: взятие на проходе
+    //TODO: превращение пешки
     addTargetPos(this.attributes.x - 1, this.attributes.y + deltaY, this.attributes.enemyCollection.models, variants);
     addTargetPos(this.attributes.x + 1, this.attributes.y + deltaY, this.attributes.enemyCollection.models, variants);
 
@@ -243,7 +275,9 @@ var King = Piece.extend({
 });
 
 
-// вспомогательные функции
+/*==============================
+  вспомогательные функции
+===============================*/
 
 function isValidCoords(x, y) {
   return (x >= 0 && x<= 7 && y >= 0 && y <= 7)
@@ -279,6 +313,7 @@ function addValidPos(x, y, yourPieces, variants , enemyPieces) {
   variants.push({x: x, y: y, type: 'validPos'});
   return true;
 };
+
 
 exports.Piece = Piece;
 exports.Pawn = Pawn;
