@@ -38,6 +38,19 @@
     </svg>
   </script>
 
+  <script type="text/template" id="pawnPromotionModalTemplate">
+    <b>Выберите фигуру:</b>
+    <div>
+    <%  pieces.forEach( (piece) => { %>
+      <div class="pawnPromotionModal__piece" data-type='<%= piece %>'>
+        <svg class="icon-piece">
+          <use xlink:href="img/sprite.svg#<%= piece %>-<%= color %>"></use>
+        </svg>
+      </div>
+    <% }) %>
+    </div>
+  </script>
+
   <script type="text/tempalte" id="logMsgTemplate--taking">
     <div>
       <span class="log__piece--<%= attacker.color %>">
@@ -53,9 +66,19 @@
   <script type="text/tempalte" id="logMsgTemplate--move">
     <div>
       <span class="log__piece--<%= piece.color %>">
-        <%= piece.type %>(<%= NtoS(piece.x) %><%= piece.y + 1 %>)
+        <%= piece.type %>(<%= NtoS(oldCoords.x) %><%= oldCoords.y + 1 %>)
       </span>
-      move to <b>(<%= NtoS(newCoords.x) %><%= newCoords.y + 1 %>)</b>
+      move to <b>(<%= NtoS(piece.x) %><%= piece.y + 1 %>)</b>
+    </div>
+  </script>
+
+  <script type="text/tempalte" id="logMsgTemplate--check">
+    <div>
+      <b>CHECK</b> to
+      <span class="log__piece--<%= color %>">
+        <%= color %>
+      </span>
+      !!!
     </div>
   </script>
 

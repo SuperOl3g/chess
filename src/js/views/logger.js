@@ -9,6 +9,8 @@ var Logger = Backbone.View.extend({
   initialize: function (collection1, collection2) {
     this.listenTo(collection1, 'taking', this.onTaking);
     this.listenTo(collection2, 'taking', this.onTaking);
+    this.listenTo(collection1, 'check', this.onCheck);
+    this.listenTo(collection2, 'check', this.onCheck);
     this.listenTo(collection1, 'move', this.onMove);
     this.listenTo(collection2, 'move', this.onMove);
   },
@@ -18,13 +20,23 @@ var Logger = Backbone.View.extend({
     return this;
   },
 
-  onMove: function (piece, newCoords) {
+  onMove: function (piece) {
     var logContent = this.$el.find(".log__content")
     logContent.append(
       _.template($('#logMsgTemplate--move').html())({
         piece: piece.attributes,
-        newCoords: newCoords,
+        oldCoords: piece.previousAttributes(),
         NtoS: NtoS
+      })
+    );
+    logContent.animate({scrollTop: logContent.prop('scrollHeight')});
+  },
+
+  onCheck: function (color) {
+    var logContent = this.$el.find(".log__content")
+    logContent.append(
+      _.template($('#logMsgTemplate--check').html())({
+        color: color
       })
     );
     logContent.animate({scrollTop: logContent.prop('scrollHeight')});

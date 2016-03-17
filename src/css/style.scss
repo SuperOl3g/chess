@@ -24,6 +24,8 @@ $tile-size: 40px;
     width: $tile-size;
     text-align: center;
     font-weight: bold;
+    user-select: none;
+    cursor: default;
   }
 
   &__row-titles {
@@ -39,6 +41,8 @@ $tile-size: 40px;
     line-height: $tile-size;
     font-weight: bold;
     display: table-row;
+    user-select: none;
+    cursor: default;
   }
 }
 
@@ -68,6 +72,10 @@ $tile-size: 40px;
   box-sizing: border-box;
   cursor: pointer;
   z-index: 10;
+
+  &:hover {
+    z-index: 11;
+  }
 }
 
 
@@ -99,4 +107,55 @@ $tile-size: 40px;
     }
   }
 
+}
+
+.pawnPromotionModal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  border: 3px solid black;
+  background: white;
+  padding: 20px;
+  z-index: 100;
+
+  &__cross {
+    position: absolute;
+    $margin: 5px;
+    $size: 30px;
+    right: $margin;
+    top: $margin;
+    width: $size;
+    height: $size;
+    cursor: pointer;
+
+    &:before,
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      background: black;
+      width: 70%;
+      height: 2px;
+      top: 50%;
+      left: 50%;
+    }
+
+    &:before {
+      transform: translate(-50%, -50%)  rotate(-45deg);
+    }
+    &:after {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+  }
+
+  &__piece {
+    width:  $tile-size;
+    height: $tile-size;
+    background: #FFCC9A;
+    margin: 5px;
+    float: left;
+    padding: 3px;
+    cursor: pointer;
+  }
 }
