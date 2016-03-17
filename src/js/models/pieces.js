@@ -9,58 +9,92 @@ var Piece = Backbone.Model.extend({
     onStartPos: true
   },
 
+  sync: function () {
+    return;
+  },
+
   moveTo: function (newX, newY) {
+    var enemyPiece;                                                                 // TODO: добавить возрващение срубленных фигур после проверки верности хода
     // проверяем являются ли новые координаты валидными
-    return this.getVariants().some( (pos) => {
-      if (pos.x==newX && pos.y == newY) {
-        if (pos.type == 'target') {
-          // если ставим в клетку с чужой фигурой, ее надо удалить
-          this.attributes.enemyCollection.models.some( (enemyPiece) => {
-            if (enemyPiece.attributes.x == newX && enemyPiece.attributes.y == newY) {
-              enemyPiece.destroy();
-              this.trigger('taking', this, enemyPiece);
-              return true;
-            }
-            return false;
-          });
-        } else {
-          this.trigger('move', this, {x: newX, y: newY});
-        }
-        // если позиция валидна, обновляем координаты модели
-        this.save({
-          x: newX,
-          y: newY,
-          onStartPos: false
-        });
-        return true;
+    var pos = this.getVariants().find( (pos) => (pos.x==newX && pos.y == newY) );
+    if (!pos) return false;
+
+    if (pos.type == 'target') {
+      // если ставим в клетку с чужой фигурой, ее надо удалить
+      enemyPiece = this.attributes.enemyCollection.models.find( (enemyPiece) => {
+        return enemyPiece.attributes.x == newX && enemyPiece.attributes.y == newY
+      });
+      if (enemyPiece) {
+        enemyPiece.destroy();
+        enemyPiece.trigger('taked', enemyPiece, this);
+        this.trigger('taking', this, enemyPiece);
       }
+      else {
+        console.error('Фигура врага не найдена');
+      }
+    }
+    var prevX = this.attributes.x,
+        prevY = this.attributes.y,
+        prewOnStartPos = this.attributes.onStartPos;
+    // если позиция валидна, переставляем фигуру
+    this.save({
+      x: newX,
+      y: newY,
+      onStartPos: false
+    });
+
+    // но если мы поставили своего короля под удар, возвращаемся обратно
+    var king = this.collection.models.find( (piece) => piece.attributes.type == 'king');
+    if ( isUnderCheck(king) ) {
+      this.save({
+        x: prevX,
+        y: prevY,
+        onStartPos: prewOnStartPos
+      });
       return false;
-    })
+    }
+
+    this.trigger('move', this);
+    return true;
+
   }
 });
 
 var Pawn = Piece.extend({
   initialize: function () {
     this.attributes.type = "pawn";
+    this.listenTo(this, 'move', this.onPawnMove);
+  },
+
+  onPawnMove: function () {
+    var lastRank = this.attributes.color == 'white' ? 7 : 0;
+    if (this.attributes.y == lastRank) {
+      this.trigger('pawnOnLastRank', this);
+    }
   },
 
   getVariants: function () {
     var variants = [],
         deltaY= this.attributes.color == 'white'? 1 : -1;
 
-
     //TODO: взятие на проходе
-    //TODO: превращение пешки
     addTargetPos(this.attributes.x - 1, this.attributes.y + deltaY, this.attributes.enemyCollection.models, variants);
     addTargetPos(this.attributes.x + 1, this.attributes.y + deltaY, this.attributes.enemyCollection.models, variants);
 
-    addValidPos(this.attributes.x, this.attributes.y + deltaY, this.collection.models, variants, this.attributes.enemyCollection.models);
+    var newX = this.attributes.x,
+        newY = this.attributes.y + deltaY;
+    if ( !isOccupied(newX, newY, this.attributes.enemyCollection.models) )
+      addValidPos(newX, newY, this, variants);
 
     // ход на 2 клетки со стартовой позиции
-    if (this.attributes.onStartPos)
-      addValidPos(this.attributes.x, this.attributes.y + 2 * deltaY, this.collection.models, variants, this.attributes.enemyCollection.models);
+    if (this.attributes.onStartPos) {
+      var newX = this.attributes.x,
+          newY = this.attributes.y + 2 * deltaY;
+      if ( !isOccupied(newX, newY, this.attributes.enemyCollection.models) )
+        addValidPos(newX, newY, this, variants);
+    }
 
-      return variants;
+    return variants;
   }
 });
 
@@ -83,11 +117,11 @@ var Knight = Piece.extend({
       {x:-2, y:-1}
     ];
 
-    differences.forEach( (variant) => {
-      var newX = this.attributes.x + variant.x,
-          newY = this.attributes.y + variant.y;
+    differences.forEach( (delta) => {
+      var newX = this.attributes.x + delta.x,
+          newY = this.attributes.y + delta.y;
       if ( !addTargetPos(newX, newY, this.attributes.enemyCollection.models, variants) )
-        addValidPos(newX, newY, this.collection.models, variants);
+        addValidPos(newX, newY, this, variants);
     });
 
     return variants;
@@ -105,28 +139,28 @@ var Bishop = Piece.extend({
     for (var i = 1, len = 7 - this.attributes.x ; i <= len; i++) {
       var newX = this.attributes.x + i,
           newY = this.attributes.y + i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     };
 
     for (var i = 1, len = 7 - this.attributes.x ; i <= len; i++) {
       var newX = this.attributes.x + i,
           newY = this.attributes.y - i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     };
 
     for (var i = 1, len = this.attributes.x ; i <= len; i++) {
       var newX = this.attributes.x - i,
           newY = this.attributes.y + i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     };
 
     for (var i = 1, len = this.attributes.x ; i <= len; i++) {
       var newX = this.attributes.x - i,
           newY = this.attributes.y - i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     };
 
@@ -145,28 +179,28 @@ var Rook = Piece.extend({
     for (var i = this.attributes.x + 1; i <= 7; i++) {
       var newX = i,
           newY = this.attributes.y;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     }
 
     for (var i = this.attributes.x - 1; i >= 0; i--) {
       var newX = i,
           newY = this.attributes.y;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     }
 
     for (var i = this.attributes.y + 1; i <= 7; i++) {
       var newX = this.attributes.x,
           newY = i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     }
 
     for (var i = this.attributes.y - 1; i >= 0; i--) {
       var newX = this.attributes.x ,
           newY = i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     }
 
@@ -186,28 +220,28 @@ var Queen = Piece.extend({
     for (var i = 1, len = 7 - this.attributes.x ; i <= len; i++) {
       var newX = this.attributes.x + i,
           newY = this.attributes.y + i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     };
 
     for (var i = 1, len = 7 - this.attributes.x ; i <= len; i++) {
       var newX = this.attributes.x + i,
           newY = this.attributes.y - i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     };
 
     for (var i = 1, len = this.attributes.x ; i <= len; i++) {
       var newX = this.attributes.x - i,
           newY = this.attributes.y + i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     };
 
     for (var i = 1, len = this.attributes.x ; i <= len; i++) {
       var newX = this.attributes.x - i,
           newY = this.attributes.y - i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     };
 
@@ -215,28 +249,28 @@ var Queen = Piece.extend({
     for (var i = this.attributes.x + 1; i <= 7; i++) {
       var newX = i,
           newY = this.attributes.y;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     }
 
     for (var i = this.attributes.x - 1; i >= 0; i--) {
       var newX = i,
           newY = this.attributes.y;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     }
 
     for (var i = this.attributes.y + 1; i <= 7; i++) {
       var newX = this.attributes.x,
           newY = i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     }
 
     for (var i = this.attributes.y - 1; i >= 0; i--) {
       var newX = this.attributes.x ,
           newY = i;
-      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this.collection.models, variants) )
+      if ( addTargetPos(newX, newY,this.attributes.enemyCollection.models, variants) || !addValidPos(newX, newY, this, variants) )
         break;
     }
 
@@ -246,11 +280,19 @@ var Queen = Piece.extend({
 
 var King = Piece.extend({
   initialize: function () {
-    this.attributes.type = "king"
+    this.attributes.type = "king";
+    this.listenTo(this.attributes.enemyCollection, 'move', this.onEnemyMove);
+    this.listenTo(this.attributes.enemyCollection, 'promotion', this.onEnemyMove);
+  },
+
+  onEnemyMove: function () {
+    if ( isUnderCheck(this) )
+      this.trigger('check', this.attributes.color);
   },
 
   getVariants: function () {
-    var variants = [];
+    var variants = [],
+        enemyVariants = [];
 
     var differences = [
       {x:-1, y:-1},
@@ -263,11 +305,52 @@ var King = Piece.extend({
       {x: 1, y: 1}
     ];
 
-    differences.forEach( (variant) => {
-      var newX = this.attributes.x + variant.x,
-          newY = this.attributes.y + variant.y;
+    this.attributes.enemyCollection.forEach( (enemyPiece) => {
+      // отдельно обрабатываем позиции короля, чтобы не уйти в рекурсию
+      if (enemyPiece.attributes.type == 'king') {
+        differences.forEach( (delta) => {
+          var newX = enemyPiece.attributes.x + delta.x,
+              newY = enemyPiece.attributes.y + delta.y;
+
+          if ( isValidCoords(newX, newY) )
+            enemyVariants.push({x: newX, y: newY});
+        });
+        return;
+      }
+
+      // отдельно обрабатываем позиции под ударом пешек
+      if (enemyPiece.attributes.type == 'pawn' ) {
+        var deltaY= enemyPiece.attributes.color == 'white'? 1 : -1;
+
+        var newX = enemyPiece.attributes.x + 1,
+            newY = enemyPiece.attributes.y + deltaY;
+        if (isValidCoords(newX, newY)) {
+          enemyVariants.push({x: newX, y: newY});
+        }
+
+        var newX = enemyPiece.attributes.x - 1,
+            newY = enemyPiece.attributes.y + deltaY;
+        if (isValidCoords(newX, newY)) {
+          enemyVariants.push({x: newX, y: newY});
+        }
+        return;
+      }
+
+      enemyVariants.push(...enemyPiece.getVariants());
+    });
+
+    differences.forEach( (delta) => {
+      var newX = this.attributes.x + delta.x,
+          newY = this.attributes.y + delta.y;
+
+      if ( !isValidCoords(newX, newY) )
+        return;
+
+      if ( enemyVariants.some( (pos) => pos.x == newX && pos.y ==newY ) )
+        return;
+
       if ( !addTargetPos(newX, newY, this.attributes.enemyCollection.models, variants) )
-        addValidPos(newX, newY, this.collection.models, variants);
+        addValidPos(newX, newY, this, variants);
     });
 
     return variants;
@@ -276,7 +359,7 @@ var King = Piece.extend({
 
 
 /*==============================
-  вспомогательные функции
+  Вспомогательные функции
 ===============================*/
 
 function isValidCoords(x, y) {
@@ -284,10 +367,18 @@ function isValidCoords(x, y) {
 };
 
 function isOccupied(x, y, checkCollection) {
-  return checkCollection.some( (model) => {
-    return model.attributes.x == x && model.attributes.y == y;
-  });
+  return checkCollection.some( (piece) => piece.attributes.x == x && piece.attributes.y == y );
 };
+
+function isUnderCheck(King) {
+  return King.attributes.enemyCollection.models.some( (enemy) => {
+    return enemy.getVariants().some( (pos) => {
+      return pos.x == King.attributes.x && pos.y == King.attributes.y;
+    });
+  })
+}
+
+
 
 function addTargetPos(x, y, enemyPieces, variants) {
   if ( !isValidCoords(x, y) )
@@ -300,14 +391,11 @@ function addTargetPos(x, y, enemyPieces, variants) {
   return false;
 }
 
-function addValidPos(x, y, yourPieces, variants , enemyPieces) {
+function addValidPos(x, y, yourPiece, variants) {
   if ( !isValidCoords(x, y) )
     return false;
 
-  if ( isOccupied(x, y, yourPieces) )
-    return false;
-
-  if ( enemyPieces && isOccupied(x,y, enemyPieces) )
+  if ( isOccupied(x, y, yourPiece.collection.models) )
     return false;
 
   variants.push({x: x, y: y, type: 'validPos'});
