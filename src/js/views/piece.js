@@ -26,6 +26,19 @@ var PieceView = Backbone.View.extend({
         shiftX = e.pageX - parseInt(startCoords.left, 10),
         shiftY = deckHeight - e.pageY - parseInt(startCoords.bottom, 10);
 
+    var $indicators = this.model.getNonBlockedVariants().map( (pos) => {
+      var indicator = document.createElement("div");
+      $(indicator)
+        .addClass(`tileIndicator--${pos.type}`)
+        .css({
+          left: `${pos.x * TILE_SIZE}px`,
+          bottom: `${pos.y * TILE_SIZE}px`
+        });
+      return $(indicator);
+    });
+
+    $deck.append($indicators);
+
     document.onmousemove = _.throttle(function(e) {
         self.$el.css({
           left: e.pageX - shiftX,
@@ -34,6 +47,10 @@ var PieceView = Backbone.View.extend({
 
         document.onmouseup = function (e) {
           document.onmousemove = null;
+
+          $indicators.forEach( ($indicator) => {
+            $indicator.remove();
+          });
 
           // определяем координаты поля на странице
           var deckOffset = $deck.offset();

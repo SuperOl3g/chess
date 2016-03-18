@@ -13,50 +13,79 @@ var Piece = Backbone.Model.extend({
     return;
   },
 
-  moveTo: function (newX, newY) {
-    var enemyPiece;                                                                 // TODO: добавить возрващение срубленных фигур после проверки верности хода
-    // проверяем являются ли новые координаты валидными
-    var pos = this.getVariants().find( (pos) => (pos.x==newX && pos.y == newY) );
-    if (!pos) return false;
+  getNonBlockedVariants: function () {
+    var variants = this.getVariants();
+    return variants.filter( (variant) => this.canBeMovedTo(variant).isValid );
+  },
+
+  canBeMovedTo: function (pos) {
+    var enemyPiece = null;
 
     if (pos.type == 'target') {
       // если ставим в клетку с чужой фигурой, ее надо удалить
       enemyPiece = this.attributes.enemyCollection.models.find( (enemyPiece) => {
-        return enemyPiece.attributes.x == newX && enemyPiece.attributes.y == newY
+        return enemyPiece.attributes.x == pos.x && enemyPiece.attributes.y == pos.y
       });
-      if (enemyPiece) {
-        enemyPiece.destroy();
-        enemyPiece.trigger('taked', enemyPiece, this);
-        this.trigger('taking', this, enemyPiece);
-      }
-      else {
+      if (enemyPiece)
+        enemyPiece.collection.remove(enemyPiece);
+      else
         console.error('Фигура врага не найдена');
-      }
     }
+
     var prevX = this.attributes.x,
         prevY = this.attributes.y,
         prewOnStartPos = this.attributes.onStartPos;
+
     // если позиция валидна, переставляем фигуру
     this.save({
-      x: newX,
-      y: newY,
+      x: pos.x,
+      y: pos.y,
       onStartPos: false
     });
 
     // но если мы поставили своего короля под удар, возвращаемся обратно
-    var king = this.collection.models.find( (piece) => piece.attributes.type == 'king');
-    if ( isUnderCheck(king) ) {
+    var king = this.collection.models.find( (piece) => piece.attributes.type == 'king'),
+        checkFlag = isUnderCheck(king);
+
+    this.save({
+      x: prevX,
+      y: prevY,
+      onStartPos: prewOnStartPos
+    });
+
+    if (enemyPiece)
+      this.attributes.enemyCollection.add(enemyPiece);
+
+    return {
+      isValid: !checkFlag,
+      enemyPiece: enemyPiece
+    };
+  },
+
+  moveTo: function (newX, newY) {
+    var enemyPiece;
+    // проверяем являются ли новые координаты валидными
+    var pos = this.getVariants().find( (pos) => (pos.x==newX && pos.y == newY) );
+    if (!pos) return false;
+
+    var posInfo = this.canBeMovedTo(pos);
+    if ( posInfo.isValid ) {
       this.save({
-        x: prevX,
-        y: prevY,
-        onStartPos: prewOnStartPos
+        x: newX,
+        y: newY,
+        onStartPos: false
       });
-      return false;
+
+      this.trigger('move', this);
+
+      if (posInfo.enemyPiece) {
+        posInfo.enemyPiece.trigger('taked', posInfo.enemyPiece, this);
+        this.trigger('taking', this, posInfo.enemyPiece);
+        posInfo.enemyPiece.destroy();
+      }
+      return true;
     }
-
-    this.trigger('move', this);
-    return true;
-
+    return false;
   }
 });
 
@@ -288,6 +317,16 @@ var King = Piece.extend({
   onEnemyMove: function () {
     if ( isUnderCheck(this) )
       this.trigger('check', this.attributes.color);
+
+      // проверка на мат
+      var underCheckVariants = [];
+      this.collection.models.forEach( (piece) => {
+        underCheckVariants.push(...piece.getNonBlockedVariants());
+      });
+      if (underCheckVariants.length == 0)
+        this.trigger('mate', this.attributes.color);
+
+      // TODO: пат
   },
 
   getVariants: function () {
