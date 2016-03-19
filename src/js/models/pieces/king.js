@@ -1,0 +1,97 @@
+import $        from 'jquery';
+import _        from 'underscore';
+import Backbone from 'Backbone';
+
+
+import {Piece, helpers} from './piece';
+
+let King = Piece.extend({
+  initialize: function () {
+    this.attributes.type = "king";
+    this.listenTo(this.attributes.enemyCollection, 'move', this.onEnemyMove);
+    this.listenTo(this.attributes.enemyCollection, 'promotion', this.onEnemyMove);
+  },
+
+  onEnemyMove: function () {
+    if ( helpers.isUnderCheck(this) )
+      this.trigger('check', this.attributes.color);
+
+      // проверка на мат
+      let underCheckVariants = [];
+      this.collection.models.forEach( (piece) => {
+        underCheckVariants.push(...piece.getNonBlockedVariants());
+      });
+      if (underCheckVariants.length == 0)
+        this.trigger('mate', this.attributes.color);
+
+      // TODO: пат
+  },
+
+  getVariants: function () {
+    let variants = [],
+        enemyVariants = [];
+
+    let differences = [
+      {x:-1, y:-1},
+      {x:-1, y: 0},
+      {x:-1, y: 1},
+      {x: 0, y:-1},
+      {x: 0, y: 1},
+      {x: 1, y:-1},
+      {x: 1, y: 0},
+      {x: 1, y: 1}
+    ];
+
+    this.attributes.enemyCollection.forEach( (enemyPiece) => {
+      // отдельно обрабатываем позиции короля, чтобы не уйти в рекурсию
+      if (enemyPiece.attributes.type == 'king') {
+        differences.forEach( (delta) => {
+          let newX = enemyPiece.attributes.x + delta.x,
+              newY = enemyPiece.attributes.y + delta.y;
+
+          if ( helpers.isValidCoords(newX, newY) )
+            enemyVariants.push({x: newX, y: newY});
+        });
+        return;
+      }
+
+      // отдельно обрабатываем позиции под ударом пешек
+      if (enemyPiece.attributes.type == 'pawn' ) {
+        let deltaY= enemyPiece.attributes.color == 'white'? 1 : -1;
+
+        let newX = enemyPiece.attributes.x + 1,
+            newY = enemyPiece.attributes.y + deltaY;
+        if (helpers.isValidCoords(newX, newY)) {
+          enemyVariants.push({x: newX, y: newY});
+        }
+
+        newX = enemyPiece.attributes.x - 1;
+        newY = enemyPiece.attributes.y + deltaY;
+        if (helpers.isValidCoords(newX, newY)) {
+          enemyVariants.push({x: newX, y: newY});
+        }
+        return;
+      }
+
+      enemyVariants.push(...enemyPiece.getVariants());
+    });
+
+    differences.forEach( (delta) => {
+      let newX = this.attributes.x + delta.x,
+          newY = this.attributes.y + delta.y;
+
+      if ( !helpers.isValidCoords(newX, newY) )
+        return;
+
+      if ( enemyVariants.some( (pos) => pos.x == newX && pos.y ==newY ) )
+        return;
+
+      if ( !helpers.addTargetPos(newX, newY, this.attributes.enemyCollection.models, variants) )
+        helpers.addValidPos(newX, newY, this, variants);
+    });
+
+    return variants;
+  }
+});
+
+export default King;

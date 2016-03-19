@@ -1,8 +1,8 @@
-var $ = require('jquery'),
-    _ = require('underscore'),
-    Backbone = require('Backbone');
+import $        from 'jquery';
+import _        from 'underscore';
+import Backbone from 'Backbone';
 
-var Logger = Backbone.View.extend({
+let Logger = Backbone.View.extend({
 
   className: 'log',
 
@@ -23,7 +23,7 @@ var Logger = Backbone.View.extend({
   },
 
   onMove: function (piece) {
-    var logContent = this.$el.find(".log__content")
+    let logContent = this.$el.find(".log__content")
     logContent.append(
       _.template($('#logMsgTemplate--move').html())({
         piece: piece.attributes,
@@ -35,7 +35,7 @@ var Logger = Backbone.View.extend({
   },
 
   onCheckOrMate: function (type, color) {
-    var logContent = this.$el.find(".log__content")
+    let logContent = this.$el.find(".log__content")
     logContent.append(
       _.template($('#logMsgTemplate--checkOrMate').html())({
         type: type,
@@ -46,7 +46,7 @@ var Logger = Backbone.View.extend({
   },
 
   onTaking: function (attacker, target) {
-    var logContent = this.$el.find(".log__content")
+    let logContent = this.$el.find(".log__content")
     logContent.append(
       _.template($('#logMsgTemplate--taking').html())({
         attacker: attacker.attributes,
@@ -59,8 +59,8 @@ var Logger = Backbone.View.extend({
 });
 
 function NtoS(number) {
-  var symbols = ['A','B','C','D','E','F','G','H'];
+  let symbols = ['A','B','C','D','E','F','G','H'];
   return symbols[number];
 }
 
-module.exports = Logger;
+export default Logger;

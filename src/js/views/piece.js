@@ -1,11 +1,12 @@
-var $ = require('jquery'),
-    _ = require('underscore'),
-    Backbone = require('Backbone');
+import $        from 'jquery';
+import _        from 'underscore';
+import Backbone from 'Backbone';
+
 
 const TILE_SIZE = 40,
       FPS = 60;
 
-var PieceView = Backbone.View.extend({
+let PieceView = Backbone.View.extend({
   className: 'piece',
   template: _.template($('#pieceTemplate').html()),
 
@@ -19,15 +20,15 @@ var PieceView = Backbone.View.extend({
   },
 
   onMouseDown: function (e) {
-    var self = this,
+    let self = this,
         $deck = $('.deck'),
-        deckHeight =$deck.height(),
+        deckHeight = $deck.height(),
         startCoords = self.$el.css(["left", "bottom"]),
         shiftX = e.pageX - parseInt(startCoords.left, 10),
         shiftY = deckHeight - e.pageY - parseInt(startCoords.bottom, 10);
 
-    var $indicators = this.model.getNonBlockedVariants().map( (pos) => {
-      var indicator = document.createElement("div");
+    let $indicators = this.model.getNonBlockedVariants().map( (pos) => {
+      let indicator = document.createElement("div");
       $(indicator)
         .addClass(`tileIndicator--${pos.type}`)
         .css({
@@ -39,13 +40,13 @@ var PieceView = Backbone.View.extend({
 
     $deck.append($indicators);
 
-    document.onmousemove = _.throttle(function(e) {
+    document.onmousemove = _.throttle( (e) => {
         self.$el.css({
           left: e.pageX - shiftX,
           bottom: deckHeight - e.pageY - shiftY,
         });
 
-        document.onmouseup = function (e) {
+        document.onmouseup = function(e) {
           document.onmousemove = null;
 
           $indicators.forEach( ($indicator) => {
@@ -53,12 +54,12 @@ var PieceView = Backbone.View.extend({
           });
 
           // определяем координаты поля на странице
-          var deckOffset = $deck.offset();
+          let deckOffset = $deck.offset();
           deckOffset.top += parseInt($deck.css('borderWidth'), 10);
           deckOffset.left += parseInt($deck.css('borderWidth'), 10);
 
           // определяем над какой клеткой мы сейчас находимся
-          var newX = Math.floor( (e.pageX - deckOffset.left) / TILE_SIZE),
+          let newX = Math.floor( (e.pageX - deckOffset.left) / TILE_SIZE),
               newY = Math.floor( (deckHeight - e.pageY + deckOffset.top) / TILE_SIZE);
 
 
@@ -74,7 +75,7 @@ var PieceView = Backbone.View.extend({
   },
 
   render: function() {
-    var model = this.model.attributes;
+    let model = this.model.attributes;
     this.$el.html(this.template({name: `${model.type}-${model.color}`}));
     this.$el.css({
       bottom: `${model.y * TILE_SIZE}px`,
@@ -84,4 +85,4 @@ var PieceView = Backbone.View.extend({
   }
 });
 
-module.exports = PieceView;
+export default PieceView;

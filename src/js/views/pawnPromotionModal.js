@@ -1,8 +1,9 @@
-var $ = require('jquery'),
-    _ = require('underscore'),
-    Backbone = require('Backbone');
+import $        from 'jquery';
+import _        from 'underscore';
+import Backbone from 'Backbone';
 
-var PawnPromotionModal = Backbone.View.extend({
+
+let PawnPromotionModal = Backbone.View.extend({
 
   className: 'pawnPromotionModal',
   template: _.template($('#pawnPromotionModalTemplate').html()),
@@ -24,10 +25,10 @@ var PawnPromotionModal = Backbone.View.extend({
   },
 
   onPieceClick: function (e) {
-    var type = $(e.target).closest('.pawnPromotionModal__piece').data('type');
+    let type = $(e.target).closest('.pawnPromotionModal__piece').data('type');
     this.model.collection.pawnPromotion(this.model, type);
     this.remove();
   }
 });
 
-module.exports = PawnPromotionModal;
+export default PawnPromotionModal;
