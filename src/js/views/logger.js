@@ -13,6 +13,8 @@ let Logger = Backbone.View.extend({
     this.listenTo(collection2, 'check', this.onCheckOrMate.bind(this, 'check'));
     this.listenTo(collection1, 'mate', this.onCheckOrMate.bind(this, 'mate'));
     this.listenTo(collection2, 'mate', this.onCheckOrMate.bind(this, 'mate'));
+    this.listenTo(collection1, 'draw', this.onDraw);
+    this.listenTo(collection2, 'draw', this.onDraw);
     this.listenTo(collection1, 'move', this.onMove);
     this.listenTo(collection2, 'move', this.onMove);
   },
@@ -23,7 +25,7 @@ let Logger = Backbone.View.extend({
   },
 
   onMove: function (piece) {
-    let logContent = this.$el.find(".log__content")
+    let logContent = this.$el.find(".log__content");
     logContent.append(
       _.template($('#logMsgTemplate--move').html())({
         piece: piece.attributes,
@@ -35,7 +37,7 @@ let Logger = Backbone.View.extend({
   },
 
   onCheckOrMate: function (type, color) {
-    let logContent = this.$el.find(".log__content")
+    let logContent = this.$el.find(".log__content");
     logContent.append(
       _.template($('#logMsgTemplate--checkOrMate').html())({
         type: type,
@@ -45,8 +47,14 @@ let Logger = Backbone.View.extend({
     logContent.animate({scrollTop: logContent.prop('scrollHeight')});
   },
 
+  onDraw: function () {
+    let logContent = this.$el.find(".log__content");
+    logContent.append(`<div><b style="text-transform: uppercase">DRAW</b>!!!</div>`);
+    logContent.animate({scrollTop: logContent.prop('scrollHeight')});
+  },
+
   onTaking: function (attacker, target) {
-    let logContent = this.$el.find(".log__content")
+    let logContent = this.$el.find(".log__content");
     logContent.append(
       _.template($('#logMsgTemplate--taking').html())({
         attacker: attacker.attributes,

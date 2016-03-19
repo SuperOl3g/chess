@@ -21,7 +21,7 @@ let Pawn = Piece.extend({
 
   getVariants: function () {
     let variants = [],
-        deltaY= this.attributes.color == 'white'? 1 : -1;
+        deltaY = this.attributes.color == 'white' ? 1 : -1;
 
     //TODO: взятие на проходе
     helpers.addTargetPos(this.attributes.x - 1, this.attributes.y + deltaY, this.attributes.enemyCollection.models, variants);

@@ -8,7 +8,7 @@ import Backbone from 'Backbone';
 ===============================*/
 let helpers = {
   isValidCoords: function(x, y) {
-    return (x >= 0 && x<= 7 && y >= 0 && y <= 7)
+    return (x >= 0 && x <= 7 && y >= 0 && y <= 7)
   },
 
   isOccupied: function(x, y, checkCollection) {
@@ -62,12 +62,18 @@ let Piece = Backbone.Model.extend({
   },
 
   getNonBlockedVariants: function () {
-    let variants = this.getVariants();
-    return variants.filter( (variant) => this.canBeMovedTo(variant).isValid );
+    return this.getVariants().filter( (variant) => this.canBeMovedTo(variant).isValid );
   },
 
   canBeMovedTo: function (pos) {
     let enemyPiece = null;
+
+    // проверяем являются ли новые координаты валидными
+    pos = this.getVariants().find( (variant) => pos.x == variant.x && pos.y == variant.y );
+    if (!pos) return {
+      isValid: false,
+      enemyPiece: enemyPiece
+    };
 
     if (pos.type == 'target') {
       // если ставим в клетку с чужой фигурой, ее надо удалить
@@ -77,7 +83,7 @@ let Piece = Backbone.Model.extend({
       if (enemyPiece)
         enemyPiece.collection.remove(enemyPiece);
       else
-        console.error('Фигура врага не найдена');
+        throw new Error('Фигура врага не найдена');
     }
 
     let prevX = this.attributes.x,
@@ -91,9 +97,10 @@ let Piece = Backbone.Model.extend({
       onStartPos: false
     });
 
-    // но если мы поставили своего короля под удар, возвращаемся обратно
-    let king = this.collection.models.find( (piece) => piece.attributes.type == 'king' ),
-        checkFlag = helpers.isUnderCheck(king);
+    let king = this.collection.models.find( (piece) => piece.attributes.type == 'king' );
+    if (!king)
+      throw new Error('Король не найден');
+    let isValid = !helpers.isUnderCheck(king);
 
     this.save({
       x: prevX,
@@ -105,18 +112,15 @@ let Piece = Backbone.Model.extend({
       this.attributes.enemyCollection.add(enemyPiece);
 
     return {
-      isValid: !checkFlag,
+      isValid: isValid,
       enemyPiece: enemyPiece
     };
   },
 
   moveTo: function (newX, newY) {
     let enemyPiece;
-    // проверяем являются ли новые координаты валидными
-    let pos = this.getVariants().find( (pos) => (pos.x==newX && pos.y == newY) );
-    if (!pos) return false;
 
-    let posInfo = this.canBeMovedTo(pos);
+    let posInfo = this.canBeMovedTo({x: newX, y: newY});
     if ( posInfo.isValid ) {
       this.save({
         x: newX,

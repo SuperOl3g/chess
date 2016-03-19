@@ -13,34 +13,35 @@ let King = Piece.extend({
   },
 
   onEnemyMove: function () {
-    if ( helpers.isUnderCheck(this) )
+    let isCheck = helpers.isUnderCheck(this),
+        isNoVariants = !this.collection.models.some( (piece) => piece.getNonBlockedVariants().length != 0 );
+
+    console.log(isNoVariants);
+    if( isNoVariants && !isCheck)
+      this.trigger('draw');
+
+    if (isCheck) {
       this.trigger('check', this.attributes.color);
 
-      // проверка на мат
-      let underCheckVariants = [];
-      this.collection.models.forEach( (piece) => {
-        underCheckVariants.push(...piece.getNonBlockedVariants());
-      });
-      if (underCheckVariants.length == 0)
+      if (isNoVariants)
         this.trigger('mate', this.attributes.color);
-
-      // TODO: пат
+    }
   },
 
   getVariants: function () {
     let variants = [],
-        enemyVariants = [];
+        enemyVariants = [],
 
-    let differences = [
-      {x:-1, y:-1},
-      {x:-1, y: 0},
-      {x:-1, y: 1},
-      {x: 0, y:-1},
-      {x: 0, y: 1},
-      {x: 1, y:-1},
-      {x: 1, y: 0},
-      {x: 1, y: 1}
-    ];
+        differences = [
+          {x:-1, y:-1},
+          {x:-1, y: 0},
+          {x:-1, y: 1},
+          {x: 0, y:-1},
+          {x: 0, y: 1},
+          {x: 1, y:-1},
+          {x: 1, y: 0},
+          {x: 1, y: 1}
+        ];
 
     this.attributes.enemyCollection.forEach( (enemyPiece) => {
       // отдельно обрабатываем позиции короля, чтобы не уйти в рекурсию
@@ -57,16 +58,17 @@ let King = Piece.extend({
 
       // отдельно обрабатываем позиции под ударом пешек
       if (enemyPiece.attributes.type == 'pawn' ) {
-        let deltaY= enemyPiece.attributes.color == 'white'? 1 : -1;
-
-        let newX = enemyPiece.attributes.x + 1,
+        let deltaY= enemyPiece.attributes.color == 'white' ? 1 : -1,
+            newX = enemyPiece.attributes.x + 1,
             newY = enemyPiece.attributes.y + deltaY;
+
         if (helpers.isValidCoords(newX, newY)) {
           enemyVariants.push({x: newX, y: newY});
         }
 
         newX = enemyPiece.attributes.x - 1;
         newY = enemyPiece.attributes.y + deltaY;
+
         if (helpers.isValidCoords(newX, newY)) {
           enemyVariants.push({x: newX, y: newY});
         }
@@ -83,7 +85,7 @@ let King = Piece.extend({
       if ( !helpers.isValidCoords(newX, newY) )
         return;
 
-      if ( enemyVariants.some( (pos) => pos.x == newX && pos.y ==newY ) )
+      if ( enemyVariants.some( (pos) => pos.x == newX && pos.y == newY ) )
         return;
 
       if ( !helpers.addTargetPos(newX, newY, this.attributes.enemyCollection.models, variants) )
