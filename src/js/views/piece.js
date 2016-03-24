@@ -8,7 +8,7 @@ const TILE_SIZE = 40,
 
 let PieceView = Backbone.View.extend({
   className: 'piece',
-  template: _.template($('#pieceTemplate').html()),
+  template: _.template($('#piece-template').html()),
 
   events: {
     'mousedown': 'onMouseDown'

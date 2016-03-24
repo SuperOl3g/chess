@@ -16,7 +16,6 @@ let King = Piece.extend({
     let isCheck = helpers.isUnderCheck(this),
         isNoVariants = !this.collection.models.some( (piece) => piece.getNonBlockedVariants().length != 0 );
 
-    console.log(isNoVariants);
     if( isNoVariants && !isCheck)
       this.trigger('draw');
 
@@ -30,7 +29,7 @@ let King = Piece.extend({
 
   getVariants: function () {
     let variants = [],
-        enemyVariants = [],
+        enemyVariants = [], // TODO: переделать на Set
 
         differences = [
           {x:-1, y:-1},

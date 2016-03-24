@@ -1,72 +1,36 @@
-import $        from 'jquery';
-import _        from 'underscore';
-import Backbone from 'Backbone';
+import $          from 'jquery';
+import _          from 'underscore';
+import Backbone   from 'Backbone';
+import Marionette from 'backbone.marionette';
+import io         from 'socket.io-client';
 
-// let io = require('socket.io-client')('http://localhost:3056');
-
-window.$=$;
+window.$ = $;
 window.Backbone = Backbone;
 
+window.io = io;
 
-import * as Pieces            from "./models/pieces/pieces";
-import PieceCollection        from './collections/pieceCollection';
-import LoggerView             from './views/logger';
-import PieceView              from './views/piece';
-import PawnPromotionModalView from './views/pawnPromotionModal';
+import LoginView     from './views/login';
 
-
-let myPieceCollection    = new PieceCollection(),
-    enemyPieceCollection = new PieceCollection(),
-    Logger               = new LoggerView(myPieceCollection, enemyPieceCollection);
-
-$("body").append(Logger.render().el);
-
-myPieceCollection.on('add', (piece) => {
-  $(".deck").append(new PieceView({model: piece}).render().el);
+let App = new Marionette.Application();
+App.addRegions({
+  mainRegion: "#main-content"
 });
-enemyPieceCollection.on('add', (piece) => {
-  $(".deck").append(new PieceView({model: piece}).render().el);
-});
-myPieceCollection.on('pawnOnLastRank', (pawn) => new PawnPromotionModalView({model: pawn}));
-enemyPieceCollection.on('pawnOnLastRank', (pawn) => new PawnPromotionModalView({model: pawn}));
+App.start();
+App.mainRegion.show(new LoginView());
 
-myPieceCollection.push([
-  new Pieces.Pawn   ({x:0, y:1, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Pawn   ({x:1, y:1, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Pawn   ({x:2, y:1, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Pawn   ({x:3, y:1, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Pawn   ({x:4, y:1, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Pawn   ({x:5, y:1, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Pawn   ({x:6, y:1, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Pawn   ({x:7, y:1, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Rook   ({x:0, y:0, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Rook   ({x:7, y:0, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Knight ({x:1, y:0, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Knight ({x:6, y:0, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Bishop ({x:2, y:0, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Bishop ({x:5, y:0, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.Queen  ({x:4, y:0, color:'white', enemyCollection: enemyPieceCollection}),
-  new Pieces.King   ({x:3, y:0, color:'white', enemyCollection: enemyPieceCollection}),
-]);
+export default App;
 
+//
+// $("body").append(new LoginView().render().el);
+// $("body").append(new RoomsListView().render().el);
+// $("body").append(new GameUIView().render().el);
 
-enemyPieceCollection.push([
-  new Pieces.Pawn   ({x:0, y:6, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Pawn   ({x:1, y:6, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Pawn   ({x:2, y:6, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Pawn   ({x:3, y:6, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Pawn   ({x:4, y:6, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Pawn   ({x:5, y:6, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Pawn   ({x:6, y:6, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Pawn   ({x:7, y:6, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Rook   ({x:0, y:7, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Rook   ({x:7, y:7, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Knight ({x:1, y:7, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Knight ({x:6, y:7, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Bishop ({x:2, y:7, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Bishop ({x:5, y:7, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.Queen  ({x:4, y:7, color:'black', enemyCollection: myPieceCollection}),
-  new Pieces.King   ({x:3, y:7, color:'black', enemyCollection: myPieceCollection}),
-]);
-
-// io.on('connect', () => console.log(`I'm connected as ${io.id}`) );
+// socket.on('connect', () => console.info(`You've been connected as ${socket.id}.`) );
+// socket.on('roomsList', function (roomsList) {console.info(roomsList)} );
+// socket.on('game_found', (response) => console.info(`You enter to ${response.roomID}, your color is ${response.color}.`) );
+//
+// let turnTypes = ['move', 'promotion', 'castling'];
+// turnTypes.forEach( (turnType) => {
+//  socket.on(`player_${turnType}`, (response) => console.info(`${response.playerColor} has made ${turnType}!!!`) );
+// });
+// socket.on('game_end', (response) => console.info(response) );

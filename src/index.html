@@ -8,41 +8,99 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="deck">
-    <div class="deck__row-titles">
-      <div class="deck__row-title">8</div>
-      <div class="deck__row-title">7</div>
-      <div class="deck__row-title">6</div>
-      <div class="deck__row-title">5</div>
-      <div class="deck__row-title">4</div>
-      <div class="deck__row-title">3</div>
-      <div class="deck__row-title">2</div>
-      <div class="deck__row-title">1</div>
-    </div>
-    <div class="deck__col-titles">
-      <div class="deck__col-title">A</div>
-      <div class="deck__col-title">B</div>
-      <div class="deck__col-title">C</div>
-      <div class="deck__col-title">D</div>
-      <div class="deck__col-title">E</div>
-      <div class="deck__col-title">F</div>
-      <div class="deck__col-title">G</div>
-      <div class="deck__col-title">H</div>
-    </div>
-  </div>
+  <div id="main-content"></div>
+
 
   <!-- templates -->
-  <script type="text/template" id="pieceTemplate">
+  <script type="text/template" id="login-template">
+    <div class="login">
+      <div class="login__block">
+        <div class="login__row">
+          <div class="login__input-block">
+            <div class="login__input-label">IP адрес сервера</div>
+            <input type="text" class="login__input login__server" value="<%= server %>">
+          </div>
+          <div class="login__input-block">
+            <div class="login__input-label">Порт</div>
+            <input type="number" class="login__input login__port" value="<%= port %>">
+          </div>
+        </div>
+        <button class="login__action-btn btn">Подключиться</button>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="main-menu-template">
+    <div class="main-menu__header">
+      <button class="main-menu__find-game-btn">Поиск игры</button>
+    </div>
+    <div class="main-menu__rooms"></div>
+    <div class="main-menu__modal"></div>
+  </script>
+
+  <script type="text/template" id="main-menu__modal-template">
+    <div class="overlay">
+      <div class="main-menu__modal-block">
+        Поиск противника...
+        <div class="main-menu__modal-time"></div>
+        <button class="btn main-menu__modal-cancel-btn">Отмена</button>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="rooms-list-template">
+    <table>
+      <thead>
+        <tr>
+          <td>ID игры</td>
+          <td>Кол-во людей</td>
+          <td></td>
+        </tr>
+      </thead>
+      <tbody>
+      <%  rooms.forEach( (room) => { %>
+        <tr>
+          <td><%= room.attributes.roomID %></td>
+          <td><%= room.attributes.length %></td>
+          <td>
+            <button class="btn rooms-list__join-btn" data-game-id="<%= room.attributes.roomID %>">
+              Смотреть
+            </button>
+          </td>
+        </tr>
+      <% }) %>
+      <% if(rooms.length == 0) { %>
+          <tr><td colspan=3>Активных игр нет</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </script>
+
+  <script type="text/template" id="deck-template">
+    <div class="deck__row-titles">
+    <%  [8,7,6,5,4,3,2,1].forEach( (elem) => { %>
+      <div class="deck__row-title"><%= elem %></div>
+    <% }) %>
+    </div>
+    <div class="deck__col-titles">
+    <%  ['A','B','C','D','E','F','G','H'].forEach( (elem) => { %>
+      <div class="deck__col-title"><%= elem %></div>
+    <% }) %>
+    </div>
+    <div class="deck__pieces"></div>
+  </script>
+
+  <script type="text/template" id="piece-template">
     <svg class="icon-piece">
       <use xlink:href="img/sprite.svg#<%= type %>-<%= color %>"></use>
     </svg>
   </script>
 
-  <script type="text/template" id="pawnPromotionModalTemplate">
+  <script type="text/template" id="pawn-promotion-modal-template">
     <b>Выберите фигуру:</b>
     <div>
     <%  pieces.forEach( (piece) => { %>
-      <div class="pawnPromotionModal__piece" data-type='<%= piece %>'>
+      <div class="pawn-promotion-modal__piece" data-type='<%= piece %>'>
         <svg class="icon-piece">
           <use xlink:href="img/sprite.svg#<%= piece %>-<%= color %>"></use>
         </svg>

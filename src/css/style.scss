@@ -1,14 +1,25 @@
 $tile-size: 40px;
+$deck-color-1: #FFCC9A;
+$deck-color-2: #8F6050;
+$border-line-color: #ccc;
+
+body, html, #main-content {
+  height: 100%;
+}
+
+/*===================
+  deck
+====================*/
 
 .deck {
-  width: 8*$tile-size;
-  height: 8*$tile-size;
+  width: 8 * $tile-size;
+  height: 8 * $tile-size;
   background: url("../img/back.jpg");
   position: relative;
   $innerline-width: 5px;
-  border: $innerline-width solid #FFCC9A;
+  border: $innerline-width solid $deck-color-1;
   $outline-width: 30px;
-  outline: $outline-width solid #8F6050;
+  outline: $outline-width solid $deck-color-2;
   margin: $outline-width;
 
   &__col-titles {
@@ -109,7 +120,7 @@ $tile-size: 40px;
 
 }
 
-.pawnPromotionModal {
+.pawn-promotion-modal {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -119,43 +130,186 @@ $tile-size: 40px;
   padding: 20px;
   z-index: 100;
 
-  &__cross {
-    position: absolute;
-    $margin: 5px;
-    $size: 30px;
-    right: $margin;
-    top: $margin;
-    width: $size;
-    height: $size;
-    cursor: pointer;
-
-    &:before,
-    &:after {
-      content: '';
-      display: block;
-      position: absolute;
-      background: black;
-      width: 70%;
-      height: 2px;
-      top: 50%;
-      left: 50%;
-    }
-
-    &:before {
-      transform: translate(-50%, -50%)  rotate(-45deg);
-    }
-    &:after {
-      transform: translate(-50%, -50%) rotate(45deg);
-    }
-  }
+  // &__cross {
+  //   position: absolute;
+  //   $margin: 5px;
+  //   $size: 30px;
+  //   right: $margin;
+  //   top: $margin;
+  //   width: $size;
+  //   height: $size;
+  //   cursor: pointer;
+  //
+  //   &:before,
+  //   &:after {
+  //     content: '';
+  //     display: block;
+  //     position: absolute;
+  //     background: black;
+  //     width: 70%;
+  //     height: 2px;
+  //     top: 50%;
+  //     left: 50%;
+  //   }
+  //
+  //   &:before {
+  //     transform: translate(-50%, -50%)  rotate(-45deg);
+  //   }
+  //   &:after {
+  //     transform: translate(-50%, -50%) rotate(45deg);
+  //   }
+  // }
 
   &__piece {
     width:  $tile-size;
     height: $tile-size;
-    background: #FFCC9A;
+    background: $deck-color-1;
     margin: 5px;
     float: left;
     padding: 3px;
     cursor: pointer;
+  }
+}
+
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(black, .7);
+  z-index: 100;
+}
+
+.btn {
+  display: block;
+  padding: 6px;
+}
+
+/*========================
+  login-page
+=========================*/
+.login {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: gray;
+
+  &__block {
+    background: white;
+    padding: 40px;
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+  &__input-block {
+    padding-bottom: 10px;
+  }
+
+  &__input-label {
+    padding-bottom: 5px;
+    font-weight: bold;
+  }
+
+  &__input {
+    width: 200px;
+    padding: 5px 5px 3px;
+  }
+
+  &__server {
+    width: 130px;
+  }
+
+  &__port {
+    width: 50px;
+  }
+
+  &__action-btn {
+    margin: 10px auto 0;
+  }
+}
+
+
+
+/*=========================
+  main-menu
+==========================*/
+.main-menu {
+  $header-height: 50px;
+  padding-top: $header-height + 25px;
+
+  &__header {
+    position: absolute;
+    height: $header-height;
+    width: 100%;
+    left: 0;
+    top: 0;
+    background: gray;
+  }
+  &__find-game-btn {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%,50%);
+    font-weight: bold;
+    color: white;
+    background: $deck-color-2;
+    border: 0;
+    padding: 15px 18px;
+    text-transform: uppercase;
+    border-radius: 10px;
+    outline: 0;
+
+    &:active {
+      top: 1px;
+    }
+  }
+  &__rooms {
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+  }
+  &__modal {
+    &-block {
+      background: white;
+      display: inline-block;
+      padding: 40px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+    }
+    &-cancel-btn {
+      margin: 20px auto 0;
+    }
+  }
+}
+
+.rooms-list {
+  display: inline-block;
+
+  table {
+    border: 1px solid $border-line-color;
+    thead {
+      background: gray;
+      color: white;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background: rgba(black, .1);
+    }
+    td {
+      padding: 5px;
+      text-align: center;
+    }
+  }
+  &__refresh-btn {
+    margin-top: 10px;
+    float: right;
   }
 }

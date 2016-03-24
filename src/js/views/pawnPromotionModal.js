@@ -5,12 +5,8 @@ import Backbone from 'Backbone';
 
 let PawnPromotionModal = Backbone.View.extend({
 
-  className: 'pawnPromotionModal',
-  template: _.template($('#pawnPromotionModalTemplate').html()),
-
-  initialize: function () {
-    $("body").append(this.render().el);
-  },
+  className: 'pawn-promotion-modal',
+  template: _.template($('#pawn-promotion-modal-template').html()),
 
   render: function() {
     this.$el.html( this.template({
@@ -21,11 +17,11 @@ let PawnPromotionModal = Backbone.View.extend({
   },
 
   events: {
-    'click .pawnPromotionModal__piece': 'onPieceClick'
+    'click .pawn-promotion-modal__piece': 'onPieceClick'
   },
 
   onPieceClick: function (e) {
-    let type = $(e.target).closest('.pawnPromotionModal__piece').data('type');
+    let type = $(e.target).closest('.pawn-promotion-modal__piece').data('type');
     this.model.collection.pawnPromotion(this.model, type);
     this.remove();
   }
