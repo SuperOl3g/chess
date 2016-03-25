@@ -24,13 +24,3 @@ export default App;
 // $("body").append(new LoginView().render().el);
 // $("body").append(new RoomsListView().render().el);
 // $("body").append(new GameUIView().render().el);
-
-// socket.on('connect', () => console.info(`You've been connected as ${socket.id}.`) );
-// socket.on('roomsList', function (roomsList) {console.info(roomsList)} );
-// socket.on('game_found', (response) => console.info(`You enter to ${response.roomID}, your color is ${response.color}.`) );
-//
-// let turnTypes = ['move', 'promotion', 'castling'];
-// turnTypes.forEach( (turnType) => {
-//  socket.on(`player_${turnType}`, (response) => console.info(`${response.playerColor} has made ${turnType}!!!`) );
-// });
-// socket.on('game_end', (response) => console.info(response) );

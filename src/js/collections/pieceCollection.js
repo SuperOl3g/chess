@@ -17,7 +17,13 @@ let PieceCollection = Backbone.Collection.extend({
     }));
     pawn.trigger('promotion', this);
     pawn.destroy();
+  },
+
+  getPieceAt: function (x, y) {
+    return this.models.find( (piece) => x == piece.attributes.x && y == piece.attributes.y);
   }
+
+
 });
 
 export default PieceCollection;

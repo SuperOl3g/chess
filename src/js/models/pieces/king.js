@@ -29,7 +29,7 @@ let King = Piece.extend({
 
   getVariants: function () {
     let variants = [],
-        enemyVariants = [], // TODO: переделать на Set
+        enemyVariants = new Set(),
 
         differences = [
           {x:-1, y:-1},
@@ -50,7 +50,7 @@ let King = Piece.extend({
               newY = enemyPiece.attributes.y + delta.y;
 
           if ( helpers.isValidCoords(newX, newY) )
-            enemyVariants.push({x: newX, y: newY});
+            enemyVariants.add({x: newX, y: newY});
         });
         return;
       }
@@ -62,19 +62,19 @@ let King = Piece.extend({
             newY = enemyPiece.attributes.y + deltaY;
 
         if (helpers.isValidCoords(newX, newY)) {
-          enemyVariants.push({x: newX, y: newY});
+          enemyVariants.add({x: newX, y: newY});
         }
 
         newX = enemyPiece.attributes.x - 1;
         newY = enemyPiece.attributes.y + deltaY;
 
         if (helpers.isValidCoords(newX, newY)) {
-          enemyVariants.push({x: newX, y: newY});
+          enemyVariants.add({x: newX, y: newY});
         }
         return;
       }
 
-      enemyVariants.push(...enemyPiece.getVariants());
+      enemyVariants.add(...enemyPiece.getVariants());
     });
 
     differences.forEach( (delta) => {
@@ -84,7 +84,7 @@ let King = Piece.extend({
       if ( !helpers.isValidCoords(newX, newY) )
         return;
 
-      if ( enemyVariants.some( (pos) => pos.x == newX && pos.y == newY ) )
+      if ( enemyVariants.has( {x: newX, y: newY }) )
         return;
 
       if ( !helpers.addTargetPos(newX, newY, this.attributes.enemyCollection.models, variants) )

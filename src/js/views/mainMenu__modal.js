@@ -19,8 +19,7 @@ let SearchModal = Backbone.View.extend({
     initialize: function () {
       socket.emit('game_find');
       socket.on('game_found', (response) => {
-        console.info(response);
-        this.trigger('game_found');
+        this.trigger('game_found', response);
         this.remove();
       });
     },

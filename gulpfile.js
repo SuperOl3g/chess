@@ -1,22 +1,23 @@
 'use strict';
 
-const gulp          = require('gulp'),
-      seq           = require('run-sequence'),
-      watch         = require('gulp-watch'),
-      browserSync   = require('browser-sync').create(),
-      rimraf        = require('rimraf'),
-      rename        = require('gulp-rename'),
-      notify        = require("gulp-notify"),
+let gulp          = require('gulp'),
+    seq           = require('run-sequence'),
+    watch         = require('gulp-watch'),
+    browserSync   = require('browser-sync').create(),
+    rimraf        = require('rimraf'),
+    rename        = require('gulp-rename'),
+    notify        = require("gulp-notify"),
 
-      sass          = require('gulp-sass'),
-      autoprefixer  = require('gulp-autoprefixer'),
+    sass          = require('gulp-sass'),
+    sassGlob      = require('gulp-sass-glob'),
+    autoprefixer  = require('gulp-autoprefixer'),
 
-      imagemin      = require('gulp-imagemin'),
-      svgstore      = require('gulp-svgstore'),
+    imagemin      = require('gulp-imagemin'),
+    svgstore      = require('gulp-svgstore'),
 
-      browserify    = require('browserify'),
-      babelify      = require('babelify'),
-      source        = require('vinyl-source-stream');
+    browserify    = require('browserify'),
+    babelify      = require('babelify'),
+    source        = require('vinyl-source-stream');
 
 
 const paths = {
@@ -33,7 +34,10 @@ gulp.task('default', (cb) => {
 });
 
 gulp.task('browserSync', () => {
-  browserSync.init({ server: { baseDir: 'dist' } });
+  browserSync.init({
+    server: { baseDir: 'dist'},
+    ghostMode: false
+  });
 });
 
 gulp.task('clean', (cb) => {
@@ -97,10 +101,12 @@ gulp.task('js', () => {
 });
 
 gulp.task('sass', () => {
-  return gulp.src(paths.sass)
+  return gulp.src('src/css/base.scss')
+    .pipe( sassGlob() )
     .pipe( sass() )
     .on('error', notify.onError( (error) => error.message) )
     .pipe( autoprefixer() )
+    .pipe(rename('style.css'))
     .pipe( gulp.dest('./dist/css') )
     .pipe( browserSync.stream() );
 });

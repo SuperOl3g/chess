@@ -33,8 +33,9 @@ let MainMenuView = Backbone.View.extend({
   onFindGameBtnClick: function () {
     let searchModal = new SearchModalView();
     this.$el.find('.main-menu__modal').append(searchModal.render().el);
-    this.listenTo(searchModal, 'game_found', () => {
-      App.mainRegion.show(new GameUIView());
+    this.listenTo(searchModal, 'game_found', (response) => {
+      console.info(response);
+      App.mainRegion.show(new GameUIView(response.color));
     });
   }
 

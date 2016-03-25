@@ -29,7 +29,7 @@ let helpers = {
       return false;
 
     if ( this.isOccupied(x, y, enemyPieces) ) {
-      variants.push({x: x, y: y, type: 'target'});
+      variants.push({x, y, type: 'target'});
       return true;
     }
     return false;
@@ -42,7 +42,7 @@ let helpers = {
     if ( this.isOccupied(x, y, yourPiece.collection.models) )
       return false;
 
-    variants.push({x: x, y: y, type: 'validPos'});
+    variants.push({x, y, type: 'validPos'});
     return true;
   }
 }
