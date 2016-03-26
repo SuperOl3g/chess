@@ -2,21 +2,15 @@ import $        from 'jquery';
 import _        from 'underscore';
 import Backbone from 'Backbone';
 
+import PieceView from './p-gameUI__piece';
 
 const TILE_SIZE = 40,
       FPS = 60;
 
-let PieceView = Backbone.View.extend({
-  className: 'piece',
-  template: _.template($('#piece-template').html()),
+let MyPieceView = PieceView.extend({
 
   events: {
     'mousedown': 'onMouseDown'
-  },
-
-  initialize: function() {
-    this.listenTo(this.model, 'move',  this.render);
-    this.listenTo(this.model, 'taked promotion', this.remove);
   },
 
   onMouseDown: function (e) {
@@ -72,20 +66,7 @@ let PieceView = Backbone.View.extend({
           };
         }
       }, 1000 / FPS)
-  },
-
-  render: function() {
-    let model = this.model.attributes;
-    this.$el.html(this.template({
-      type: model.type,
-      color: model.color
-    }));
-    this.$el.css({
-      bottom: `${model.y * TILE_SIZE}px`,
-      left:   `${model.x * TILE_SIZE}px`,
-    });
-    return this;
   }
 });
 
-export default PieceView;
+export default MyPieceView;

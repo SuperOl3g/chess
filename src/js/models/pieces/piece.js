@@ -1,4 +1,3 @@
-import $        from 'jquery';
 import _        from 'underscore';
 import Backbone from 'Backbone';
 
@@ -11,10 +10,6 @@ let helpers = {
     return (x >= 0 && x <= 7 && y >= 0 && y <= 7)
   },
 
-  isOccupied: function(x, y, checkCollection) {
-    return checkCollection.some( (piece) => piece.attributes.x == x && piece.attributes.y == y );
-  },
-
   isUnderCheck: function(King) {
     return King.attributes.enemyCollection.models.some( (enemy) => {
       return enemy.getVariants().some( (pos) => {
@@ -23,12 +18,11 @@ let helpers = {
     })
   },
 
-
-  addTargetPos: function(x, y, enemyPieces, variants) {
+  addTargetPos: function(x, y, enemyCollection, variants) {
     if ( !this.isValidCoords(x, y) )
       return false;
 
-    if ( this.isOccupied(x, y, enemyPieces) ) {
+    if ( enemyCollection.getPieceAt(x, y) ) {
       variants.push({x, y, type: 'target'});
       return true;
     }
@@ -39,7 +33,7 @@ let helpers = {
     if ( !this.isValidCoords(x, y) )
       return false;
 
-    if ( this.isOccupied(x, y, yourPiece.collection.models) )
+    if ( yourPiece.collection.getPieceAt(x, y) )
       return false;
 
     variants.push({x, y, type: 'validPos'});
@@ -77,9 +71,7 @@ let Piece = Backbone.Model.extend({
 
     if (pos.type == 'target') {
       // если ставим в клетку с чужой фигурой, ее надо удалить
-      enemyPiece = this.attributes.enemyCollection.models.find( (enemyPiece) => {
-        return enemyPiece.attributes.x == pos.x && enemyPiece.attributes.y == pos.y
-      });
+      enemyPiece = this.attributes.enemyCollection.getPieceAt(pos.x, pos.y);
       if (enemyPiece)
         enemyPiece.collection.remove(enemyPiece);
       else

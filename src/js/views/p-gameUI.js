@@ -4,9 +4,10 @@ import Backbone from 'Backbone';
 
 import * as Pieces            from "./../models/pieces/pieces";
 import PieceCollection        from './../collections/pieceCollection';
-import LoggerView             from './logger';
-import PieceView              from './piece';
-import PawnPromotionModalView from './pawnPromotionModal';
+import LoggerView             from './p-gameUI__logger';
+import PieceView              from './p-gameUI__piece';
+import MyPieceView            from './p-gameUI__piece--my';
+import PawnPromotionModalView from './p-gameUI__promotion-modal';
 
 let GameUIView = Backbone.View.extend({
 
@@ -15,29 +16,29 @@ let GameUIView = Backbone.View.extend({
 
   render: function() {
     this.$el.html( this.template() );
-    this.subViews.forEach( (childView) => {
-      this.$el.find('.deck__pieces').append(childView.render().el);
-    });
+    let subViews = this.subViews.map( (childView) => childView.render().el );
+    this.$el.append(subViews);
     return this;
   },
 
   initialize: function (myColor) {
-    let myPieceCollection    = new PieceCollection(),
-        enemyPieceCollection = new PieceCollection(),
-        sides = [];
+    let sides = {};
 
-    sides[myColor] = myPieceCollection;
-    sides[myColor == 'white' ? 'black' : 'white'] = enemyPieceCollection;
-
-    let Logger = new LoggerView(sides['white'], sides['black']);
-    $("body").append(Logger.render().el);
+    sides['white'] = new PieceCollection();
+    sides['black'] = new PieceCollection();
 
     this.subViews = [];
 
-    myPieceCollection   .on('add', (piece) => this.subViews.push(new PieceView({model: piece})) );
-    enemyPieceCollection.on('add', (piece) => this.subViews.push(new PieceView({model: piece})) );
-    myPieceCollection   .on('pawnOnLastRank', (pawn) => $("body").append(new PawnPromotionModalView({model: pawn}).render().el) );
-    enemyPieceCollection.on('pawnOnLastRank', (pawn) => $("body").append(new PawnPromotionModalView({model: pawn}).render().el) );
+    this.subViews.push( new LoggerView(sides['white'], sides['black']) );
+
+    Object.keys(sides).forEach( (color) => {
+      if (color == myColor)
+        sides[color].on('add', (piece) => this.subViews.push(new MyPieceView({model: piece})) );
+      else
+        sides[color].on('add', (piece) => this.subViews.push(new PieceView({model: piece})) );
+
+      sides[color].on('pawnOnLastRank', (pawn) => this.subViews.push(new PawnPromotionModalView({model: pawn})) );
+    });
 
     sides['white'].push([
       new Pieces.Pawn   ({x:0, y:1, color:'white', enemyCollection: sides['black']}),
@@ -78,18 +79,20 @@ let GameUIView = Backbone.View.extend({
       new Pieces.King   ({x:3, y:7, color:'black', enemyCollection: sides['white']}),
     ]);
 
-    myPieceCollection.on('move', (piece) => {
-        socket.emit('turn_move', {
-          from: {
-            x: piece.previous('x'),
-            y: piece.previous('y'),
-          },
-          to: {
-            x: piece.attributes.x,
-            y: piece.attributes.y
-          }
-        });
-    });
+    if (myColor) {
+      sides[myColor].on('move', (piece) => {
+          socket.emit('turn_move', {
+            from: {
+              x: piece.previous('x'),
+              y: piece.previous('y'),
+            },
+            to: {
+              x: piece.attributes.x,
+              y: piece.attributes.y
+            }
+          });
+      });
+    };
 
     socket.on('player_move', (response) => {
       console.info(response.from);

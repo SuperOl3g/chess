@@ -1,4 +1,3 @@
-import $        from 'jquery';
 import _        from 'underscore';
 import Backbone from 'Backbone';
 
@@ -24,19 +23,19 @@ let Pawn = Piece.extend({
         deltaY = this.attributes.color == 'white' ? 1 : -1;
 
     //TODO: взятие на проходе
-    helpers.addTargetPos(this.attributes.x - 1, this.attributes.y + deltaY, this.attributes.enemyCollection.models, variants);
-    helpers.addTargetPos(this.attributes.x + 1, this.attributes.y + deltaY, this.attributes.enemyCollection.models, variants);
+    helpers.addTargetPos(this.attributes.x - 1, this.attributes.y + deltaY, this.attributes.enemyCollection, variants);
+    helpers.addTargetPos(this.attributes.x + 1, this.attributes.y + deltaY, this.attributes.enemyCollection, variants);
 
     let newX = this.attributes.x,
         newY = this.attributes.y + deltaY;
-    if ( !helpers.isOccupied(newX, newY, this.attributes.enemyCollection.models) )
+    if ( !this.attributes.enemyCollection.getPieceAt(newX, newY) )
       helpers.addValidPos(newX, newY, this, variants);
 
     // ход на 2 клетки со стартовой позиции
     if (this.attributes.onStartPos) {
       let newX = this.attributes.x,
           newY = this.attributes.y + 2 * deltaY;
-      if ( !helpers.isOccupied(newX, newY, this.attributes.enemyCollection.models) )
+      if ( !this.attributes.enemyCollection.getPieceAt(newX, newY) )
         helpers.addValidPos(newX, newY, this, variants);
     }
 

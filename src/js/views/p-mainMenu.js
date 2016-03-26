@@ -4,8 +4,8 @@ import Backbone   from 'Backbone';
 
 import App             from './../app';
 import RoomsListView   from './roomsList';
-import SearchModalView from './mainMenu__modal';
-import GameUIView      from './gameUI'
+import SearchModalView from './p-mainMenu__modal';
+import GameUIView      from './p-gameUI'
 
 let MainMenuView = Backbone.View.extend({
 

@@ -9,7 +9,7 @@ window.Backbone = Backbone;
 
 window.io = io;
 
-import LoginView     from './views/login';
+import LoginView from './views/p-login';
 
 let App = new Marionette.Application();
 App.addRegions({

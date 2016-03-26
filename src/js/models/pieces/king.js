@@ -1,4 +1,3 @@
-import $        from 'jquery';
 import _        from 'underscore';
 import Backbone from 'Backbone';
 
@@ -87,7 +86,7 @@ let King = Piece.extend({
       if ( enemyVariants.has( {x: newX, y: newY }) )
         return;
 
-      if ( !helpers.addTargetPos(newX, newY, this.attributes.enemyCollection.models, variants) )
+      if ( !helpers.addTargetPos(newX, newY, this.attributes.enemyCollection, variants) )
         helpers.addValidPos(newX, newY, this, variants);
     });
 

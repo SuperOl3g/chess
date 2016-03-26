@@ -3,7 +3,7 @@ import _          from 'underscore';
 import Backbone   from 'Backbone';
 
 import App           from './../app';
-import MainMenuView from './mainMenu';
+import MainMenuView from './p-mainMenu';
 
 let LoginView = Backbone.View.extend({
 
