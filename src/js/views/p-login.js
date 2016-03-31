@@ -2,8 +2,6 @@ import $          from 'jquery';
 import _          from 'underscore';
 import Backbone   from 'Backbone';
 
-import App           from './../app';
-import MainMenuView from './p-mainMenu';
 
 let LoginView = Backbone.View.extend({
 
@@ -21,11 +19,10 @@ let LoginView = Backbone.View.extend({
 
     $actionBtn.html('Подключение...')
     window.socket = io(`${server}:${port}`);
-    console.log(window.socket);
 
     socket.on('connect', () => {
       console.info(`You've been connected as ${socket.id}.`);
-      App.mainRegion.show(new MainMenuView());
+      // App.mainRegion.show(new MainMenuView());
       socket.removeAllListeners('connect');
     });
   },

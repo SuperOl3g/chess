@@ -7,16 +7,13 @@ let Logger = Backbone.View.extend({
   className: 'log',
 
   initialize: function (collection1, collection2) {
-    this.listenTo(collection1, 'taking', this.onTaking);
-    this.listenTo(collection2, 'taking', this.onTaking);
-    this.listenTo(collection1, 'check', this.onCheckOrMate.bind(this, 'check'));
-    this.listenTo(collection2, 'check', this.onCheckOrMate.bind(this, 'check'));
-    this.listenTo(collection1, 'mate', this.onCheckOrMate.bind(this, 'mate'));
-    this.listenTo(collection2, 'mate', this.onCheckOrMate.bind(this, 'mate'));
-    this.listenTo(collection1, 'draw', this.onDraw);
-    this.listenTo(collection2, 'draw', this.onDraw);
-    this.listenTo(collection1, 'move', this.onMove);
-    this.listenTo(collection2, 'move', this.onMove);
+    [collection1, collection2].forEach( (collection) => {
+      this.listenTo(collection, 'taking', this.onTaking);
+      this.listenTo(collection, 'check', this.onCheckOrMate.bind(this, 'check'));
+      this.listenTo(collection, 'mate', this.onCheckOrMate.bind(this, 'mate'));
+      this.listenTo(collection, 'draw', this.onDraw);
+      this.listenTo(collection, 'move', this.onMove);
+    });
   },
 
   render: function() {

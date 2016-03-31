@@ -2,6 +2,8 @@ import $          from 'jquery';
 import _          from 'underscore';
 import Backbone   from 'Backbone';
 
+let timerID;
+
 let SearchModal = Backbone.View.extend({
 
     className: 'main-menu__modal',
@@ -13,19 +15,34 @@ let SearchModal = Backbone.View.extend({
 
     onCancelBtnClick: function () {
       socket.emit('game_stopFinding');
-      this.remove();
+      this.close();
+    },
+
+    onClose: function () {
+      clearInterval(timerID);
     },
 
     initialize: function () {
       socket.emit('game_find');
       socket.on('game_found', (response) => {
         this.trigger('game_found', response);
-        this.remove();
+        this.close();
       });
     },
 
     render: function() {
       this.$el.html( this.template() );
+      let time = new Date(0);
+
+      timerID = setInterval( () => {
+        let min = time.getMinutes(),
+            sec = time.getSeconds();
+
+        time.setSeconds(++sec);
+
+        this.$el.find('.main-menu__modal-time').html(`${min<10?'0':''}${min}:${sec<10?'0':''}${sec}`);
+      }, 1000);
+
       return this;
     },
 });

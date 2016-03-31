@@ -2,10 +2,8 @@ import $          from 'jquery';
 import _          from 'underscore';
 import Backbone   from 'Backbone';
 
-import App             from './../app';
 import RoomsListView   from './roomsList';
 import SearchModalView from './p-mainMenu__modal';
-import GameUIView      from './p-gameUI'
 
 let MainMenuView = Backbone.View.extend({
 
@@ -13,7 +11,7 @@ let MainMenuView = Backbone.View.extend({
   template:  _.template($('#main-menu-template').html()),
 
   events: {
-    'click .main-menu__find-game-btn': 'onFindGameBtnClick'
+    'click .main-menu__find-game-btn': 'onFindGameBtnClick' 
   },
 
   render: function() {
@@ -26,13 +24,14 @@ let MainMenuView = Backbone.View.extend({
       let roomsList = new RoomsListView();
       this.subView = roomsList;
       this.listenTo(roomsList, 'joined-to-game', () => {
-        App.mainRegion.show(new GameUIView());
+        // App.mainRegion.show(new GameUIView());
       });
   },
 
   onFindGameBtnClick: function () {
     let searchModal = new SearchModalView();
     this.$el.find('.main-menu__modal').append(searchModal.render().el);
+
     this.listenTo(searchModal, 'game_found', (response) => {
       console.info(response);
       App.mainRegion.show(new GameUIView(response.color));

@@ -9,6 +9,8 @@ import PieceView              from './p-gameUI__piece';
 import MyPieceView            from './p-gameUI__piece--my';
 import PawnPromotionModalView from './p-gameUI__promotion-modal';
 
+let subViews = [];
+
 let GameUIView = Backbone.View.extend({
 
   className: 'deck',
@@ -16,8 +18,8 @@ let GameUIView = Backbone.View.extend({
 
   render: function() {
     this.$el.html( this.template() );
-    let subViews = this.subViews.map( (childView) => childView.render().el );
-    this.$el.append(subViews);
+    let subViewsElems = subViews.map( (childView) => childView.render().el );
+    this.$el.append(subViewsElems);
     return this;
   },
 
@@ -27,17 +29,15 @@ let GameUIView = Backbone.View.extend({
     sides['white'] = new PieceCollection();
     sides['black'] = new PieceCollection();
 
-    this.subViews = [];
-
-    this.subViews.push( new LoggerView(sides['white'], sides['black']) );
+    subViews.push( new LoggerView(sides['white'], sides['black']) );
 
     Object.keys(sides).forEach( (color) => {
       if (color == myColor)
-        sides[color].on('add', (piece) => this.subViews.push(new MyPieceView({model: piece})) );
+        sides[color].on('add', (piece) => subViews.push(new MyPieceView({model: piece})) );
       else
-        sides[color].on('add', (piece) => this.subViews.push(new PieceView({model: piece})) );
+        sides[color].on('add', (piece) => subViews.push(new PieceView({model: piece})) );
 
-      sides[color].on('pawnOnLastRank', (pawn) => this.subViews.push(new PawnPromotionModalView({model: pawn})) );
+      sides[color].on('pawnOnLastRank', (pawn) => subViews.push(new PawnPromotionModalView({model: pawn})) );
     });
 
     sides['white'].push([
@@ -95,8 +95,7 @@ let GameUIView = Backbone.View.extend({
     };
 
     socket.on('player_move', (response) => {
-      console.info(response.from);
-      var movingPiece = sides[response.playerColor].getPieceAt(response.from.x, response.from.y);
+      let movingPiece = sides[response.playerColor].getPieceAt(response.from.x, response.from.y);
       movingPiece.moveTo(response.to.x, response.to.y);
     });
 

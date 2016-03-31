@@ -1,22 +1,34 @@
 import $          from 'jquery';
 import _          from 'underscore';
 import Backbone   from 'Backbone';
-import Marionette from 'backbone.marionette';
 import io         from 'socket.io-client';
 
 window.$ = $;
 window.Backbone = Backbone;
 
+
 window.io = io;
 
-import LoginView from './views/p-login';
+Backbone.View.prototype.close = function(){
+  this.remove();
+  this.unbind();
+  if (this.onClose){
+    this.onClose();
+  }
+}
 
-let App = new Marionette.Application();
-App.addRegions({
-  mainRegion: "#main-content"
-});
-App.start();
-App.mainRegion.show(new LoginView());
+
+import LoginView    from './views/p-login';
+import MainMenuView from './views/p-mainMenu';
+import GameUIView   from './views/p-gameUI';
+
+let App = {};
+// let App = new Marionette.Application();
+// App.addRegions({
+//   mainRegion: "#main-content"
+// });
+// App.start();
+// App.mainRegion.show(new LoginView());
 
 export default App;
 
