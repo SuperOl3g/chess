@@ -6,7 +6,6 @@ import io         from 'socket.io-client';
 window.$ = $;
 window.Backbone = Backbone;
 
-
 window.io = io;
 
 Backbone.View.prototype.close = function(){
@@ -22,17 +21,25 @@ import LoginView    from './views/p-login';
 import MainMenuView from './views/p-mainMenu';
 import GameUIView   from './views/p-gameUI';
 
-let App = {};
-// let App = new Marionette.Application();
-// App.addRegions({
-//   mainRegion: "#main-content"
-// });
-// App.start();
-// App.mainRegion.show(new LoginView());
+let App = {
+  setMainRegion: function(newView) {
+    if (this.mainRegion)
+      this.mainRegion.close();
+    this.mainRegion = newView;
+    $('#main-content').html( newView.render().$el);
+  }
+};
 
-export default App;
+let loginView = new LoginView();
+App.setMainRegion(loginView);
+loginView.on('login', createMainMenu);
 
-//
-// $("body").append(new LoginView().render().el);
-// $("body").append(new RoomsListView().render().el);
-// $("body").append(new GameUIView().render().el);
+function createMainMenu() {
+  let mainMenuView = new MainMenuView();
+  App.setMainRegion(mainMenuView);
+  mainMenuView.on('joined-to-game', (params) => {
+    let inGameView = new GameUIView(params)
+    App.setMainRegion(inGameView);
+    inGameView.on('close', createMainMenu );
+  });
+}

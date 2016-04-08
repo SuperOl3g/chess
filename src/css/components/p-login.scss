@@ -1,0 +1,46 @@
+
+.login {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: gray;
+
+  &__block {
+    background: white;
+    padding: 40px;
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: 215px;
+  }
+
+  &__input-block {
+    padding-bottom: 10px;
+  }
+
+  &__input-label {
+    padding-bottom: 5px;
+    font-weight: bold;
+  }
+
+  &__input {
+    width: 200px;
+    padding: 5px 5px 3px;
+  }
+
+  &__server {
+    width: 130px;
+  }
+
+  &__port {
+    width: 50px;
+  }
+
+  &__action-btn {
+    margin: 10px auto 0;
+  }
+}

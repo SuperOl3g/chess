@@ -16,6 +16,15 @@ let GameUIView = Backbone.View.extend({
   className: 'deck',
   template: _.template($('#deck-template').html()),
 
+  events: {
+    'click .deck__close-btn' : 'onCloseBtnClick'
+  },
+
+  onCloseBtnClick: function () {
+    socket.emit('room_leave');
+    this.trigger('close');
+  },
+
   render: function() {
     this.$el.html( this.template() );
     let subViewsElems = subViews.map( (childView) => childView.render().el );

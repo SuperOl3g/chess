@@ -24,7 +24,7 @@ let MainMenuView = Backbone.View.extend({
       let roomsList = new RoomsListView();
       this.subView = roomsList;
       this.listenTo(roomsList, 'joined-to-game', () => {
-        // App.mainRegion.show(new GameUIView());
+        this.trigger('joined-to-game');
       });
   },
 
@@ -34,7 +34,7 @@ let MainMenuView = Backbone.View.extend({
 
     this.listenTo(searchModal, 'game_found', (response) => {
       console.info(response);
-      App.mainRegion.show(new GameUIView(response.color));
+      this.trigger('joined-to-game', response.color);
     });
   }
 

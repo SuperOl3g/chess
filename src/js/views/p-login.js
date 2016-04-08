@@ -22,7 +22,7 @@ let LoginView = Backbone.View.extend({
 
     socket.on('connect', () => {
       console.info(`You've been connected as ${socket.id}.`);
-      // App.mainRegion.show(new MainMenuView());
+      this.trigger('login');
       socket.removeAllListeners('connect');
     });
   },
