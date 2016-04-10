@@ -1,6 +1,5 @@
 import $        from 'jquery';
 import _        from 'underscore';
-import Backbone from 'Backbone';
 
 import PieceView from './p-gameUI__piece';
 
@@ -14,38 +13,38 @@ let MyPieceView = PieceView.extend({
   },
 
   onMouseDown: function (e) {
-    let self = this,
-        $deck = $('.deck'),
+    // если не наш ход, фигуру двигать нельзя
+    if (!this.model.collection.turnFlag)
+      return;
+
+    let $deck = $('.deck'),
         deckHeight = $deck.height(),
-        startCoords = self.$el.css(["left", "bottom"]),
+        startCoords = this.$el.css(["left", "bottom"]),
         shiftX = e.pageX - parseInt(startCoords.left, 10),
         shiftY = deckHeight - e.pageY - parseInt(startCoords.bottom, 10);
 
     let $indicators = this.model.getNonBlockedVariants().map( (pos) => {
-      let indicator = document.createElement("div");
-      $(indicator)
+      return $(document.createElement("div"))
         .addClass(`tileIndicator--${pos.type}`)
         .css({
           left:   `${pos.x * TILE_SIZE}px`,
           bottom: `${pos.y * TILE_SIZE}px`
         });
-      return $(indicator);
     });
 
     $deck.append($indicators);
 
     document.onmousemove = _.throttle( (e) => {
-        self.$el.css({
+        this.$el.css({
           left: e.pageX - shiftX,
           bottom: deckHeight - e.pageY - shiftY,
         });
 
         document.onmouseup = (e) => {
           document.onmousemove = null;
+          document.onmouseup = null;
 
-          $indicators.forEach( ($indicator) => {
-            $indicator.remove();
-          });
+          $indicators.forEach( ($indicator) => $indicator.remove() );
 
           // определяем координаты поля на странице
           let deckOffset = $deck.offset();
@@ -57,13 +56,15 @@ let MyPieceView = PieceView.extend({
               newY = Math.floor( (deckHeight - e.pageY + deckOffset.top) / TILE_SIZE);
 
 
-          if( !self.model.moveTo(newX, newY) ) {
+          if( this.model.moveTo(newX, newY) ) {
+            this.model.collection.turnFlag = false;
+          } else {
             // если позиция невалидна, возвращаем в исходное положение
-            self.$el.css({
+            this.$el.css({
               left: startCoords.left,
               bottom: startCoords.bottom
             });
-          };
+          }
         }
       }, 1000 / FPS)
   }
