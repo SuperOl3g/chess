@@ -1,0 +1,250 @@
+.deck {
+  width: 320px;
+  height: 320px;
+  background: url("../img/back.jpg");
+  position: relative;
+  border: 5px solid #FFCC9A;
+  outline: 30px solid #8F6050;
+  margin: 30px; }
+  .deck__close-btn {
+    position: fixed;
+    right: 15px;
+    top: 15px; }
+  .deck__col-titles {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    -webkit-transform: translateY(100%);
+            transform: translateY(100%);
+    display: table;
+    padding-top: 12px; }
+  .deck__col-title {
+    display: inline-block;
+    width: 40px;
+    text-align: center;
+    font-weight: bold;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    cursor: default; }
+  .deck__row-titles {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: table;
+    -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+    padding-right: 15px; }
+  .deck__row-title {
+    height: 40px;
+    line-height: 40px;
+    font-weight: bold;
+    display: table-row;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    cursor: default; }
+
+.tileIndicator--validPos, .tileIndicator--target {
+  position: absolute;
+  width: 40px;
+  height: 40px; }
+
+.tileIndicator--validPos {
+  background: yellow; }
+
+.tileIndicator--target {
+  background: red; }
+
+.piece {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  padding: 3px;
+  box-sizing: border-box;
+  cursor: pointer;
+  z-index: 10; }
+  .piece:hover {
+    z-index: 11; }
+
+.icon-piece {
+  width: 100%;
+  height: 100%; }
+
+.log {
+  width: 300px;
+  padding: 20px;
+  -webkit-transform: translateY(100%);
+          transform: translateY(100%);
+  bottom: 0;
+  position: absolute; }
+  .log__content {
+    height: 150px;
+    overflow: auto; }
+  .log__piece--black {
+    color: black;
+    font-weight: 900; }
+  .log__piece--white {
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    font-weight: bold;
+    color: white; }
+
+.pawn-promotion-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  border: 3px solid black;
+  background: white;
+  padding: 20px;
+  z-index: 100; }
+  .pawn-promotion-modal__piece {
+    width: 40px;
+    height: 40px;
+    background: #FFCC9A;
+    margin: 5px;
+    float: left;
+    padding: 3px;
+    cursor: pointer; }
+
+.game-end-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  border: 3px solid black;
+  background: white;
+  padding: 20px;
+  z-index: 100;
+  text-align: center;
+  min-width: 200px; }
+
+.login {
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background: gray; }
+  .login__block {
+    background: white;
+    padding: 40px; }
+  .login__row {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: nowrap;
+        -ms-flex-wrap: nowrap;
+            flex-wrap: nowrap;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    width: 215px; }
+  .login__input-block {
+    padding-bottom: 10px; }
+  .login__input-label {
+    padding-bottom: 5px;
+    font-weight: bold; }
+  .login__input {
+    width: 200px;
+    padding: 5px 5px 3px; }
+  .login__server {
+    width: 130px; }
+  .login__port {
+    width: 50px; }
+  .login__action-btn {
+    margin: 10px auto 0; }
+
+.main-menu {
+  padding-top: 75px; }
+  .main-menu__header {
+    position: absolute;
+    height: 50px;
+    width: 100%;
+    left: 0;
+    top: 0;
+    background: gray; }
+  .main-menu__find-game-btn {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    -webkit-transform: translate(-50%, 50%);
+            transform: translate(-50%, 50%);
+    font-weight: bold;
+    color: white;
+    background: #8F6050;
+    border: 0;
+    padding: 15px 18px;
+    text-transform: uppercase;
+    border-radius: 10px;
+    outline: 0; }
+    .main-menu__find-game-btn:active {
+      top: 1px; }
+  .main-menu__rooms {
+    margin: 20px auto;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
+  .main-menu__modal-block {
+    background: white;
+    display: inline-block;
+    padding: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); }
+  .main-menu__modal-cancel-btn {
+    margin: 20px auto 0; }
+
+.rooms-list {
+  display: inline-block; }
+  .rooms-list table {
+    border: 1px solid #ccc; }
+    .rooms-list table thead {
+      background: gray;
+      color: white;
+      font-weight: bold; }
+    .rooms-list table tr:nth-child(even) {
+      background: rgba(0, 0, 0, 0.1); }
+    .rooms-list table td {
+      padding: 5px;
+      text-align: center; }
+  .rooms-list__refresh-btn {
+    margin-top: 10px;
+    float: right; }
+
+body, html, #main-content {
+  height: 100%; }
+
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 100; }
+
+.btn {
+  display: block;
+  padding: 6px; }
