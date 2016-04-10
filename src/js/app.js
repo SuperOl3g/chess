@@ -43,3 +43,7 @@ function createMainMenu() {
     inGameView.on('close', createMainMenu );
   });
 }
+
+
+// запрещаем дефолтное перетаскивание картинок (мешает нашему дрег'н'дропу)
+$(document).on('mousedown', 'img', (e) => e.preventDefault() );

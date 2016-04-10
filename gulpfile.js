@@ -75,13 +75,22 @@ gulp.task('img', () => {
     .pipe( browserSync.stream() );
 });
 
-gulp.task('sprite-svg', function() {
-  return gulp.src( paths.spriteSvg )
-    .pipe( svgstore() )
-    .pipe( imagemin({ multipass: true }) )
-    .pipe( rename('sprite.svg') )
-    .pipe( gulp.dest('./dist/img') )
-    .pipe( browserSync.stream() );
+gulp.task('sprite-svg', () => {
+  // return gulp.src( paths.spriteSvg )
+  //   .pipe( svgstore() )
+  //   .pipe( imagemin({ multipass: true }) )
+  //   .pipe( rename('sprite.svg') )
+  //   .pipe( gulp.dest('./dist/img') )
+  //   .pipe( browserSync.stream() );
+  return gulp.src(paths.spriteSvg)
+      .pipe( imagemin({
+        optimizationLevel: 2,
+        progressive: true,
+        interlaced: true,
+        multipass: true
+      }))
+      .pipe( gulp.dest('./dist/img') )
+      .pipe( browserSync.stream() );
 });
 
 gulp.task('css', () => {

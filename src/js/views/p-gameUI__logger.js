@@ -46,7 +46,7 @@ let Logger = Backbone.View.extend({
 
   onDraw: function () {
     let logContent = this.$el.find(".log__content");
-    logContent.append(`<div><b style="text-transform: uppercase">DRAW</b>!!!</div>`);
+    logContent.append(`<div><b>DRAW!!!</b></div>`);
     logContent.animate({scrollTop: logContent.prop('scrollHeight')});
   },
 

@@ -134,3 +134,17 @@
     cursor: pointer;
   }
 }
+
+.game-end-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  border: 3px solid black;
+  background: white;
+  padding: 20px;
+  z-index: 100;
+  text-align: center;
+  min-width: 200px;
+
+}

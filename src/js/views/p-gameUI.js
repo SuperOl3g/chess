@@ -8,6 +8,7 @@ import LoggerView             from './p-gameUI__logger';
 import PieceView              from './p-gameUI__piece';
 import MyPieceView            from './p-gameUI__piece--my';
 import PawnPromotionModalView from './p-gameUI__promotion-modal';
+import GameEndModalView       from './p-gameUI__game-end-modal';
 
 let subViews = [];
 
@@ -46,7 +47,9 @@ let GameUIView = Backbone.View.extend({
       else
         sides[color].on('add', (piece) => subViews.push(new PieceView({model: piece})) );
 
-      sides[color].on('pawnOnLastRank', (pawn) => subViews.push(new PawnPromotionModalView({model: pawn})) );
+      sides[color].on('pawnOnLastRank', (pawn) => {
+        this.$el.append( new PawnPromotionModalView({model: pawn}).render().el );
+      });
     });
 
     sides['white'].push([
@@ -108,7 +111,12 @@ let GameUIView = Backbone.View.extend({
       movingPiece.moveTo(response.to.x, response.to.y);
     });
 
-    socket.on('game_end', (response) => console.info(`Игра окончена: ${response}`) );
+    socket.on('game_end', (response) => {
+      let gameEndView = new GameEndModalView({model: response});
+      this.$el.append( gameEndView.render().el );
+      gameEndView.on('close', () => this.trigger('close') );
+
+    });
   }
 });
 

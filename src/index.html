@@ -92,9 +92,7 @@
   </script>
 
   <script type="text/template" id="piece-template">
-    <svg class="icon-piece">
-      <use xlink:href="img/sprite.svg#<%= type %>-<%= color %>"></use>
-    </svg>
+    <img class="icon-piece" src="img/<%= type %>-<%= color %>.svg">
   </script>
 
   <script type="text/template" id="pawn-promotion-modal-template">
@@ -102,13 +100,19 @@
     <div>
     <%  pieces.forEach( (piece) => { %>
       <div class="pawn-promotion-modal__piece" data-type='<%= piece %>'>
-        <svg class="icon-piece">
-          <use xlink:href="img/sprite.svg#<%= piece %>-<%= color %>"></use>
-        </svg>
+        <img class="icon-piece" src="img/<%= piece %>-<%= color %>.svg">
       </div>
     <% }) %>
     </div>
   </script>
+
+  <script type="text/template" id="game-end-modal-template">
+    <div><b>Игра окончена</b></div>
+    <div>Причина: <%= response.msg %></div>
+    <div>Победитель: <%= response.winnerColor %></div>
+    <button class="game-end-modal__close-btn">Вернуться в меню</button>
+  </script>
+
 
   <script type="text/tempalte" id="logMsgTemplate--taking">
     <div>
