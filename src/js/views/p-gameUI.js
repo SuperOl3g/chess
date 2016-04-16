@@ -1,6 +1,6 @@
 import $        from 'jquery';
 import _        from 'underscore';
-import Backbone from 'Backbone';
+import Backbone from 'backbone';
 
 import * as Pieces            from "./../models/pieces/pieces";
 import PieceCollection        from './../collections/pieceCollection';
@@ -43,7 +43,7 @@ let GameUIView = Backbone.View.extend({
 
     Object.keys(sides).forEach( (color) => {
       if (color == myColor)
-        sides[color].on('add', (piece) => subViews.push(new MyPieceView({model: piece})) );
+        sides[color].on('add', (piece) => subViews.push(new MyPieceView({model: piece})));
       else
         sides[color].on('add', (piece) => subViews.push(new PieceView({model: piece})) );
 
@@ -71,8 +71,7 @@ let GameUIView = Backbone.View.extend({
       new Pieces.King   ({x:3, y:0, color:'white', enemyCollection: sides['black']}),
     ]);
 
-
-  sides['black'].push([
+    sides['black'].push([
       new Pieces.Pawn   ({x:0, y:6, color:'black', enemyCollection: sides['white']}),
       new Pieces.Pawn   ({x:1, y:6, color:'black', enemyCollection: sides['white']}),
       new Pieces.Pawn   ({x:2, y:6, color:'black', enemyCollection: sides['white']}),
@@ -92,23 +91,27 @@ let GameUIView = Backbone.View.extend({
     ]);
 
     if (myColor) {
+      sides[myColor].turnFlag = myColor == 'white';
+
       sides[myColor].on('move', (piece) => {
-          socket.emit('turn_move', {
-            from: {
-              x: piece.previous('x'),
-              y: piece.previous('y'),
-            },
-            to: {
-              x: piece.attributes.x,
-              y: piece.attributes.y
-            }
-          });
+        socket.emit('turn_move', {
+          from: {
+            x: piece.previous('x'),
+            y: piece.previous('y'),
+          },
+          to: {
+            x: piece.attributes.x,
+            y: piece.attributes.y
+          }
+        });
       });
     };
 
     socket.on('player_move', (response) => {
       let movingPiece = sides[response.playerColor].getPieceAt(response.from.x, response.from.y);
       movingPiece.moveTo(response.to.x, response.to.y);
+      if (myColor)
+        sides[myColor].turnFlag = true;
     });
 
     socket.on('game_end', (response) => {

@@ -1,6 +1,6 @@
 import $        from 'jquery';
 import _        from 'underscore';
-import Backbone from 'Backbone';
+import Backbone from 'backbone';
 
 
 const TILE_SIZE = 40;

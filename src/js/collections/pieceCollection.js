@@ -1,5 +1,5 @@
 import _        from 'underscore';
-import Backbone from 'Backbone';
+import Backbone from 'backbone';
 
 import * as Pieces from "./../models/pieces/pieces";
 
@@ -20,9 +20,13 @@ let PieceCollection = Backbone.Collection.extend({
 
   getPieceAt: function (x, y) {
     return this.models.find( (piece) => x == piece.attributes.x && y == piece.attributes.y);
+  },
+
+  initialize: function () {
+    this.listenTo(this, 'move', (piece) => {
+      this.lastMovedPiece = piece;
+    });
   }
-
-
 });
 
 export default PieceCollection;

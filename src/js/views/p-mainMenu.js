@@ -1,6 +1,6 @@
 import $          from 'jquery';
 import _          from 'underscore';
-import Backbone   from 'Backbone';
+import Backbone   from 'backbone';
 
 import RoomsListView   from './roomsList';
 import SearchModalView from './p-mainMenu__modal';

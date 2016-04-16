@@ -1,5 +1,4 @@
-import _        from 'underscore';
-import Backbone from 'Backbone';
+import Backbone from 'backbone';
 
 let RoomsList = Backbone.Collection.extend({
   initialize: function () {

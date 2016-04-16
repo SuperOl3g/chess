@@ -1,6 +1,6 @@
 import $        from 'jquery';
 import _        from 'underscore';
-import Backbone from 'Backbone';
+import Backbone from 'backbone';
 
 
 let PawnPromotionModal = Backbone.View.extend({

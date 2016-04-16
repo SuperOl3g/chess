@@ -1,10 +1,10 @@
 import _        from 'underscore';
-import Backbone from 'Backbone';
+import Backbone from 'backbone';
 
 
-/*==============================
-  Вспомогательные функции
-===============================*/
+/*========================================================
+    Вспомогательные функции
+ =========================================================*/
 let helpers = {
   isValidCoords: function(x, y) {
     return (x >= 0 && x <= 7 && y >= 0 && y <= 7)
@@ -19,21 +19,15 @@ let helpers = {
   },
 
   addTargetPos: function(x, y, enemyCollection, variants) {
-    if ( !this.isValidCoords(x, y) )
+    if ( !this.isValidCoords(x, y) || !enemyCollection.getPieceAt(x, y) )
       return false;
 
-    if ( enemyCollection.getPieceAt(x, y) ) {
-      variants.push({x, y, type: 'target'});
-      return true;
-    }
-    return false;
+    variants.push({x, y, type: 'target'});
+    return true;
   },
 
   addValidPos: function(x, y, yourPiece, variants) {
-    if ( !this.isValidCoords(x, y) )
-      return false;
-
-    if ( yourPiece.collection.getPieceAt(x, y) )
+    if ( !this.isValidCoords(x, y) || yourPiece.collection.getPieceAt(x, y) )
       return false;
 
     variants.push({x, y, type: 'validPos'});
@@ -51,15 +45,15 @@ let Piece = Backbone.Model.extend({
     onStartPos: true
   },
 
-  sync: function () {
+  sync: function() {
     return;
   },
 
-  getNonBlockedVariants: function () {
+  getNonBlockedVariants: function() {
     return this.getVariants().filter( (variant) => this.canBeMovedTo(variant).isValid );
   },
 
-  canBeMovedTo: function (pos) {
+  canBeMovedTo: function(pos, targetPos) {
     let enemyPiece = null;
 
     // проверяем являются ли новые координаты валидными
@@ -71,7 +65,11 @@ let Piece = Backbone.Model.extend({
 
     if (pos.type == 'target') {
       // если ставим в клетку с чужой фигурой, ее надо удалить
-      enemyPiece = this.attributes.enemyCollection.getPieceAt(pos.x, pos.y);
+      if (targetPos)
+        enemyPiece = this.attributes.enemyCollection.getPieceAt(targetPos.x, targetPos.y);
+      if (!enemyPiece)
+        enemyPiece = this.attributes.enemyCollection.getPieceAt(pos.x, pos.y);
+
       if (enemyPiece)
         enemyPiece.collection.remove(enemyPiece);
       else
@@ -109,9 +107,7 @@ let Piece = Backbone.Model.extend({
     };
   },
 
-  moveTo: function (newX, newY) {
-    let enemyPiece;
-
+  moveTo: function(newX, newY) {
     let posInfo = this.canBeMovedTo({x: newX, y: newY});
     if ( posInfo.isValid ) {
       this.save({

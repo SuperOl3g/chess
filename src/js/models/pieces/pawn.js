@@ -1,6 +1,4 @@
 import _        from 'underscore';
-import Backbone from 'Backbone';
-
 
 import {Piece, helpers} from './piece';
 
@@ -18,13 +16,39 @@ let Pawn = Piece.extend({
     }
   },
 
+  canBeMovedTo: function(pos) {
+    let deltaY = this.attributes.color == 'white' ? 1 : -1;
+
+    // дополнительная обработка варианта с взятием на проходе
+    if ([1,-1].some( (deltaX) => this.attributes.x + deltaX == pos.x && this.attributes.y + deltaY == pos.y ))
+      return this.constructor.__super__.canBeMovedTo.call(this, pos, {x: pos.x, y: pos.y - deltaY});
+
+    return this.constructor.__super__.canBeMovedTo.call(this, pos);
+  },
+
   getVariants: function () {
     let variants = [],
         deltaY = this.attributes.color == 'white' ? 1 : -1;
 
-    //TODO: взятие на проходе
     helpers.addTargetPos(this.attributes.x - 1, this.attributes.y + deltaY, this.attributes.enemyCollection, variants);
     helpers.addTargetPos(this.attributes.x + 1, this.attributes.y + deltaY, this.attributes.enemyCollection, variants);
+
+    // взятие на проходе
+    [-1,1].forEach( (deltaX) => {
+      let targetX = this.attributes.x + deltaX,
+          targetY = this.attributes.y;
+
+      let target = this.attributes.enemyCollection.getPieceAt(targetX, targetY);
+
+      if (helpers.isValidCoords(targetX, targetY) && target && target.attributes.type == 'pawn'
+        && target.previous('onStartPos') && this.attributes.enemyCollection.lastMovedPiece == target) {
+        variants.push({
+          x: targetX,
+          y: targetY + deltaY,
+          type: 'target'
+        });
+      }
+    });
 
     let newX = this.attributes.x,
         newY = this.attributes.y + deltaY;
@@ -38,7 +62,6 @@ let Pawn = Piece.extend({
       if ( !this.attributes.enemyCollection.getPieceAt(newX, newY) )
         helpers.addValidPos(newX, newY, this, variants);
     }
-
     return variants;
   }
 });

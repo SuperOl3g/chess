@@ -1,6 +1,7 @@
 import $          from 'jquery';
 import _          from 'underscore';
-import Backbone   from 'Backbone';
+import Backbone   from 'backbone';
+import io         from 'socket.io-client';
 
 
 let LoginView = Backbone.View.extend({

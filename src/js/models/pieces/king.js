@@ -1,5 +1,4 @@
 import _        from 'underscore';
-import Backbone from 'Backbone';
 
 
 import {Piece, helpers} from './piece';

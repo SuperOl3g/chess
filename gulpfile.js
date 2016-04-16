@@ -4,20 +4,26 @@ let gulp          = require('gulp'),
     seq           = require('run-sequence'),
     watch         = require('gulp-watch'),
     browserSync   = require('browser-sync').create(),
-    rimraf        = require('rimraf'),
+    clean         = require('gulp-clean'),
     rename        = require('gulp-rename'),
     notify        = require("gulp-notify"),
+    plumber       = require('gulp-plumber'),
 
     sass          = require('gulp-sass'),
     sassGlob      = require('gulp-sass-glob'),
+    cssimport     = require("gulp-cssimport"),
     autoprefixer  = require('gulp-autoprefixer'),
 
     imagemin      = require('gulp-imagemin'),
     svgstore      = require('gulp-svgstore'),
 
-    browserify    = require('browserify'),
-    babelify      = require('babelify'),
-    source        = require('vinyl-source-stream');
+    webpack       = require("gulp-webpack"),
+    webpackConfig = require("./webpack.config"),
+    named         = require('vinyl-named');
+
+    // browserify    = require('browserify'),
+    // babelify      = require('babelify'),
+    // source        = require('vinyl-source-stream');
 
 
 const paths = {
@@ -40,8 +46,9 @@ gulp.task('browserSync', () => {
   });
 });
 
-gulp.task('clean', (cb) => {
-  rimraf('dist', cb);
+gulp.task('clean', () => {
+  return gulp.src('dist/*', {read: false})
+    .pipe( clean() );
 });
 
 gulp.task('build', (cb) => {
@@ -99,13 +106,15 @@ gulp.task('css', () => {
     .pipe( browserSync.stream() );
 });
 
+
+
 gulp.task('js', () => {
-  return browserify('src/js/app.js')
-    .transform(babelify, {presets: ["es2015"]})
-    .bundle()
-    .on('error', notify.onError( (error) => error.message) )
-    .pipe(source('bundle.js') )
-    .pipe( gulp.dest('./dist/js') )
+  return gulp.src(['src/js/app.js'])
+    .pipe(named())
+    .pipe(plumber({ errorHandler: notify.onError( (error) => error.message)}))
+    .pipe(webpack(webpackConfig))
+    .pipe(plumber.stop())
+    .pipe(gulp.dest('dist/js'))
     .pipe( browserSync.stream() );
 });
 
@@ -113,6 +122,7 @@ gulp.task('sass', () => {
   return gulp.src('src/css/base.scss')
     .pipe( sassGlob() )
     .pipe( sass() )
+    .pipe(cssimport({}))
     .on('error', notify.onError( (error) => error.message) )
     .pipe( autoprefixer() )
     .pipe(rename('style.css'))

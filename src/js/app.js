@@ -1,12 +1,9 @@
 import $          from 'jquery';
 import _          from 'underscore';
-import Backbone   from 'Backbone';
-import io         from 'socket.io-client';
+import Backbone   from 'backbone';
 
 window.$ = $;
 window.Backbone = Backbone;
-
-window.io = io;
 
 Backbone.View.prototype.close = function(){
   this.remove();
@@ -14,8 +11,7 @@ Backbone.View.prototype.close = function(){
   if (this.onClose){
     this.onClose();
   }
-}
-
+};
 
 import LoginView    from './views/p-login';
 import MainMenuView from './views/p-mainMenu';
