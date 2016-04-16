@@ -472,16 +472,14 @@ th {
             user-select: none;
     cursor: default; }
 
-.tileIndicator--validPos, .tileIndicator--target {
+.tileIndicator {
   position: absolute;
   width: 40px;
   height: 40px; }
-
-.tileIndicator--validPos {
-  background: yellow; }
-
-.tileIndicator--target {
-  background: red; }
+  .tileIndicator--validPos, .tileIndicator--castling {
+    background: yellow; }
+  .tileIndicator--target {
+    background: red; }
 
 .piece {
   position: absolute;
@@ -549,7 +547,7 @@ th {
   min-width: 200px; }
 
 .login {
-  height: 100%;
+  height: 100vh;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -657,9 +655,6 @@ th {
   .rooms-list__refresh-btn {
     margin-top: 10px;
     float: right; }
-
-body, html, #main-content {
-  height: 100%; }
 
 .overlay {
   position: fixed;
