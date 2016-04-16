@@ -1,0 +1,8 @@
+<b>Выберите фигуру:</b>
+<div>
+  <%  pieces.forEach( (piece) => { %>
+  <div class="pawn-promotion-modal__piece" data-type='<%= piece %>'>
+    <img class="icon-piece" src="img/<%= piece %>-<%= color %>.svg">
+  </div>
+  <% }) %>
+</div>

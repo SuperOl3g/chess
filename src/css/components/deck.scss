@@ -52,14 +52,12 @@
 }
 
 .tileIndicator {
+  position: absolute;
+  width: $tile-size;
+  height: $tile-size;
 
   &--validPos,
-  &--target {
-    position: absolute;
-    width: $tile-size;
-    height: $tile-size;
-  }
-  &--validPos {
+  &--castling {
     background: yellow;
   }
 

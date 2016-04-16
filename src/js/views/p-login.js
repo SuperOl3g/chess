@@ -3,11 +3,12 @@ import _          from 'underscore';
 import Backbone   from 'backbone';
 import io         from 'socket.io-client';
 
+import template from './../../templates/p-login.ejs';
 
 let LoginView = Backbone.View.extend({
 
   className: 'login',
-  template: _.template($('#login-template').html()),
+  template: _.template(template),
 
   events: {
     'click .login__action-btn': 'onActionBtnClick'

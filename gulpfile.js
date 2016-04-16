@@ -21,18 +21,14 @@ let gulp          = require('gulp'),
     webpackConfig = require("./webpack.config"),
     named         = require('vinyl-named');
 
-    // browserify    = require('browserify'),
-    // babelify      = require('babelify'),
-    // source        = require('vinyl-source-stream');
-
-
 const paths = {
   js:           'src/js/**/*.js',
   sass:         'src/css/**/*.scss',
   css:          'src/css/**/*.css',
   img:          'src/img/*',
   spriteSvg:    'src/sprite-svg/*.svg',
-  html:         'src/**/*.html',
+  html:         'src/*.html',
+  templates:    'src/templates/*'
 };
 
 gulp.task('default', (cb) => {
@@ -57,6 +53,7 @@ gulp.task('build', (cb) => {
 
 gulp.task('watch', ['build'], () => {
   watch( paths.js,        () => { seq('js');         });
+  watch( paths.templates, () => { seq('js');         });
   watch( paths.html,      () => { seq('html');       });
   watch( paths.sass,      () => { seq('sass');       });
   watch( paths.css,       () => { seq('css');        });

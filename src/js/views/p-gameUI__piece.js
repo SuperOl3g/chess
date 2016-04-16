@@ -7,10 +7,10 @@ const TILE_SIZE = 40;
 
 let PieceView = Backbone.View.extend({
   className: 'piece',
-  template: _.template($('#piece-template').html()),
+  template: _.template('<img class="icon-piece" src="img/<%= type %>-<%= color %>.svg">'),
 
   initialize: function() {
-    this.listenTo(this.model, 'move',  this.render);
+    this.listenTo(this.model, 'move castling',  this.render);
     this.listenTo(this.model, 'taked promotion', this.remove);
   },
 

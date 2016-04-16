@@ -24,6 +24,10 @@ module.exports = {
           ignore:  ['jquery','backbone','underscore']
         }
       },
+      {
+        test: /\.(ejs|html)/,
+        loader: 'text'
+      }
     ]
   },
 

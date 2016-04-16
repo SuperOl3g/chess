@@ -1,0 +1,25 @@
+<table>
+  <thead>
+  <tr>
+    <td>ID игры</td>
+    <td>Кол-во людей</td>
+    <td></td>
+  </tr>
+  </thead>
+  <tbody>
+  <% rooms.forEach( (room) => { %>
+  <tr>
+    <td><%= room.attributes.roomID %></td>
+    <td><%= room.attributes.length %></td>
+    <td>
+      <button class="btn rooms-list__join-btn" data-game-id="<%= room.attributes.roomID %>">
+        Смотреть
+      </button>
+    </td>
+  </tr>
+  <% }) %>
+  <% if(rooms.length == 0) { %>
+  <tr><td colspan=3>Активных игр нет</td></tr>
+  <% } %>
+  </tbody>
+</table>

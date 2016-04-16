@@ -46,7 +46,7 @@ let Piece = Backbone.Model.extend({
   },
 
   sync: function() {
-    return;
+
   },
 
   getNonBlockedVariants: function() {
@@ -63,8 +63,8 @@ let Piece = Backbone.Model.extend({
       enemyPiece: enemyPiece
     };
 
+    // если ставим в клетку с чужой фигурой, ее надо удалить
     if (pos.type == 'target') {
-      // если ставим в клетку с чужой фигурой, ее надо удалить
       if (targetPos)
         enemyPiece = this.attributes.enemyCollection.getPieceAt(targetPos.x, targetPos.y);
       if (!enemyPiece)
@@ -78,7 +78,7 @@ let Piece = Backbone.Model.extend({
 
     let prevX = this.attributes.x,
         prevY = this.attributes.y,
-        prewOnStartPos = this.attributes.onStartPos;
+        prevOnStartPos = this.attributes.onStartPos;
 
     // если позиция валидна, переставляем фигуру
     this.save({
@@ -95,7 +95,7 @@ let Piece = Backbone.Model.extend({
     this.save({
       x: prevX,
       y: prevY,
-      onStartPos: prewOnStartPos
+      onStartPos: prevOnStartPos
     });
 
     if (enemyPiece)
@@ -103,7 +103,8 @@ let Piece = Backbone.Model.extend({
 
     return {
       isValid: isValid,
-      enemyPiece: enemyPiece
+      enemyPiece: enemyPiece,
+      isCastling: pos.type == 'castling'
     };
   },
 

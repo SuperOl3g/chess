@@ -1,0 +1,31 @@
+<div>
+  <% switch (type) {
+    case 'taking': %>
+      <span class="log__piece--<%= attacker.color %>">
+        <%= attacker.type %>(<%= NtoS(attacker.x) %><%= attacker.y + 1 %>)
+      </span>
+      take
+      <span class="log__piece--<%= target.color %>">
+        <%= target.type %>(<%= NtoS(target.x) %><%= target.y + 1 %>)
+      </span>
+    <% break;
+
+    case 'move': %>
+      <span class="log__piece--<%= piece.color %>">
+        <%= piece.type %>(<%= NtoS(oldCoords.x) %><%= oldCoords.y + 1 %>)
+      </span>
+      move to <b>(<%= NtoS(piece.x) %><%= piece.y + 1 %>)</b>
+    <% break;
+
+    case 'draw': %>
+      <b>DRAW!!!</b>
+    <% break;
+
+    case 'checkOrMate': %>
+      <b style="text-transform: uppercase"><%= type %></b> to
+      <span class="log__piece--<%= color %>">
+        <%= color %>
+      </span>
+      !!!
+  <% } %>
+</div>

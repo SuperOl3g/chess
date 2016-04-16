@@ -2,6 +2,8 @@ import $        from 'jquery';
 import _        from 'underscore';
 import Backbone from 'backbone';
 
+import msgTemplate from './../../templates/log-msg.ejs';
+
 let Logger = Backbone.View.extend({
 
   className: 'log',
@@ -24,7 +26,8 @@ let Logger = Backbone.View.extend({
   onMove: function (piece) {
     let logContent = this.$el.find(".log__content");
     logContent.append(
-      _.template($('#logMsgTemplate--move').html())({
+      _.template(msgTemplate)({
+        type: 'move',
         piece: piece.attributes,
         oldCoords: piece.previousAttributes(),
         NtoS: NtoS
@@ -33,12 +36,13 @@ let Logger = Backbone.View.extend({
     logContent.animate({scrollTop: logContent.prop('scrollHeight')});
   },
 
-  onCheckOrMate: function (type, color) {
+  onCheckOrMate: function (endType, color) {
     let logContent = this.$el.find(".log__content");
     logContent.append(
-      _.template($('#logMsgTemplate--checkOrMate').html())({
-        type: type,
-        color: color
+      _.template(msgTemplate)({
+        type:  'checkOrMate',
+        endType,
+        color
       })
     );
     logContent.animate({scrollTop: logContent.prop('scrollHeight')});
@@ -53,7 +57,8 @@ let Logger = Backbone.View.extend({
   onTaking: function (attacker, target) {
     let logContent = this.$el.find(".log__content");
     logContent.append(
-      _.template($('#logMsgTemplate--taking').html())({
+      _.template(msgTemplate)({
+        type: 'taking',
         attacker: attacker.attributes,
         target: target.attributes,
         NtoS: NtoS

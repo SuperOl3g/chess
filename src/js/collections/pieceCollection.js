@@ -12,7 +12,8 @@ let PieceCollection = Backbone.Collection.extend({
       x: pawn.attributes.x,
       y: pawn.attributes.y,
       color: pawn.attributes.color,
-      enemyCollection: pawn.attributes.enemyCollection
+      enemyCollection: pawn.attributes.enemyCollection,
+      onStartPos: false
     }));
     pawn.trigger('promotion', this);
     pawn.destroy();

@@ -25,7 +25,7 @@ let MyPieceView = PieceView.extend({
 
     let $indicators = this.model.getNonBlockedVariants().map( (pos) => {
       return $(document.createElement("div"))
-        .addClass(`tileIndicator--${pos.type}`)
+        .addClass(`tileIndicator tileIndicator--${pos.type}`)
         .css({
           left:   `${pos.x * TILE_SIZE}px`,
           bottom: `${pos.y * TILE_SIZE}px`

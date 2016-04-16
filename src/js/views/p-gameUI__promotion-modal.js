@@ -2,11 +2,12 @@ import $        from 'jquery';
 import _        from 'underscore';
 import Backbone from 'backbone';
 
+import template from './../../templates/p-gameUI__promotion-modal.ejs';
 
 let PawnPromotionModal = Backbone.View.extend({
 
   className: 'pawn-promotion-modal',
-  template: _.template($('#pawn-promotion-modal-template').html()),
+  template: _.template(template),
 
   render: function() {
     this.$el.html( this.template({

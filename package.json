@@ -29,6 +29,7 @@
     "gulp-watch": "^4.3.5",
     "gulp-webpack": "^1.5.0",
     "run-sequence": "^1.1.5",
+    "text-loader": "0.0.1",
     "vinyl-named": "^1.1.0",
     "vinyl-source-stream": "^1.1.0",
     "webpack": "^1.12.14"

@@ -10,12 +10,15 @@ import MyPieceView            from './p-gameUI__piece--my';
 import PawnPromotionModalView from './p-gameUI__promotion-modal';
 import GameEndModalView       from './p-gameUI__game-end-modal';
 
+
+import template from './../../templates/deck.ejs';
+
 let subViews = [];
 
 let GameUIView = Backbone.View.extend({
 
   className: 'deck',
-  template: _.template($('#deck-template').html()),
+  template: _.template(template),
 
   events: {
     'click .deck__close-btn' : 'onCloseBtnClick'
@@ -67,8 +70,8 @@ let GameUIView = Backbone.View.extend({
       new Pieces.Knight ({x:6, y:0, color:'white', enemyCollection: sides['black']}),
       new Pieces.Bishop ({x:2, y:0, color:'white', enemyCollection: sides['black']}),
       new Pieces.Bishop ({x:5, y:0, color:'white', enemyCollection: sides['black']}),
-      new Pieces.Queen  ({x:4, y:0, color:'white', enemyCollection: sides['black']}),
-      new Pieces.King   ({x:3, y:0, color:'white', enemyCollection: sides['black']}),
+      new Pieces.Queen  ({x:3, y:0, color:'white', enemyCollection: sides['black']}),
+      new Pieces.King   ({x:4, y:0, color:'white', enemyCollection: sides['black']}),
     ]);
 
     sides['black'].push([
@@ -86,14 +89,27 @@ let GameUIView = Backbone.View.extend({
       new Pieces.Knight ({x:6, y:7, color:'black', enemyCollection: sides['white']}),
       new Pieces.Bishop ({x:2, y:7, color:'black', enemyCollection: sides['white']}),
       new Pieces.Bishop ({x:5, y:7, color:'black', enemyCollection: sides['white']}),
-      new Pieces.Queen  ({x:4, y:7, color:'black', enemyCollection: sides['white']}),
-      new Pieces.King   ({x:3, y:7, color:'black', enemyCollection: sides['white']}),
+      new Pieces.Queen  ({x:3, y:7, color:'black', enemyCollection: sides['white']}),
+      new Pieces.King   ({x:4, y:7, color:'black', enemyCollection: sides['white']}),
     ]);
 
     if (myColor) {
       sides[myColor].turnFlag = myColor == 'white';
 
       sides[myColor].on('move', (piece) => {
+        socket.emit('turn_move', {
+          from: {
+            x: piece.previous('x'),
+            y: piece.previous('y'),
+          },
+          to: {
+            x: piece.attributes.x,
+            y: piece.attributes.y
+          }
+        });
+      });
+
+      sides[myColor].models.find((piece) => piece.attributes.type == 'king').on('castling', (piece) => {
         socket.emit('turn_move', {
           from: {
             x: piece.previous('x'),

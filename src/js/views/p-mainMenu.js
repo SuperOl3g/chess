@@ -5,10 +5,12 @@ import Backbone   from 'backbone';
 import RoomsListView   from './roomsList';
 import SearchModalView from './p-mainMenu__modal';
 
+import template from './../../templates/p-main-menu.ejs';
+
 let MainMenuView = Backbone.View.extend({
 
   className: 'main-menu',
-  template:  _.template($('#main-menu-template').html()),
+  template:  _.template(template),
 
   events: {
     'click .main-menu__find-game-btn': 'onFindGameBtnClick' 

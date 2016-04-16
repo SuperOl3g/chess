@@ -4,10 +4,12 @@ import Backbone   from 'backbone';
 
 import RoomsList from './../collections/roomsList';
 
+import template from './../../templates/rooms-list.ejs';
+
 let RoomsListView = Backbone.View.extend({
 
   className: 'rooms-list',
-  template: _.template($('#rooms-list-template').html()),
+  template: _.template(template),
 
   events: {
     'click .rooms-list__join-btn': 'onJoinBtnClick'

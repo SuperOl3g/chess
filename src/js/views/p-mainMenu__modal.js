@@ -2,12 +2,14 @@ import $          from 'jquery';
 import _          from 'underscore';
 import Backbone   from 'backbone';
 
+import template from './../../templates/p-main-menu__modal.ejs';
+
 let timerID;
 
 let SearchModal = Backbone.View.extend({
 
     className: 'main-menu__modal',
-    template: _.template($('#main-menu__modal-template').html()),
+    template: _.template(template),
 
     events: {
       'click .main-menu__modal-cancel-btn': 'onCancelBtnClick'
