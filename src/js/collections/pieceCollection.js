@@ -8,15 +8,17 @@ let PieceCollection = Backbone.Collection.extend({
 
   pawnPromotion: function(pawn, type) {
     let Type = type[0].toUpperCase() + type.slice(1);
-    this.push(new Pieces[Type]({
+    let newPiece = new Pieces[Type]({
       x: pawn.attributes.x,
       y: pawn.attributes.y,
       color: pawn.attributes.color,
       enemyCollection: pawn.attributes.enemyCollection,
       onStartPos: false
-    }));
-    pawn.trigger('promotion', this);
+    });
+    this.push(newPiece);
+    pawn.trigger('promotion', pawn, newPiece);
     pawn.destroy();
+    return newPiece;
   },
 
   getPieceAt: function (x, y) {

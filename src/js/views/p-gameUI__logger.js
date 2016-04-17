@@ -8,8 +8,8 @@ let Logger = Backbone.View.extend({
 
   className: 'log',
 
-  initialize: function (collection1, collection2) {
-    [collection1, collection2].forEach( (collection) => {
+  initialize: function (col1, col2) {
+    [col1, col2].forEach( (collection) => {
       this.listenTo(collection, 'taking', this.onTaking);
       this.listenTo(collection, 'check', this.onCheckOrMate.bind(this, 'check'));
       this.listenTo(collection, 'mate', this.onCheckOrMate.bind(this, 'mate'));
@@ -50,7 +50,11 @@ let Logger = Backbone.View.extend({
 
   onDraw: function () {
     let logContent = this.$el.find(".log__content");
-    logContent.append(`<div><b>DRAW!!!</b></div>`);
+    logContent.append(
+      _.template(msgTemplate)({
+        type: 'draw'
+      })
+    );
     logContent.animate({scrollTop: logContent.prop('scrollHeight')});
   },
 

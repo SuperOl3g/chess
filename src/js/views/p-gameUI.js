@@ -10,8 +10,8 @@ import MyPieceView            from './p-gameUI__piece--my';
 import PawnPromotionModalView from './p-gameUI__promotion-modal';
 import GameEndModalView       from './p-gameUI__game-end-modal';
 
-
 import template from './../../templates/deck.ejs';
+
 
 let subViews = [];
 
@@ -30,9 +30,7 @@ let GameUIView = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html( this.template() );
-    let subViewsElems = subViews.map( (childView) => childView.render().el );
-    this.$el.append(subViewsElems);
+    this.$el.prepend( this.template() );
     return this;
   },
 
@@ -42,17 +40,13 @@ let GameUIView = Backbone.View.extend({
     sides['white'] = new PieceCollection();
     sides['black'] = new PieceCollection();
 
-    subViews.push( new LoggerView(sides['white'], sides['black']) );
+    this.$el.append( new LoggerView(sides['white'], sides['black']).render().el );
 
     Object.keys(sides).forEach( (color) => {
       if (color == myColor)
-        sides[color].on('add', (piece) => subViews.push(new MyPieceView({model: piece})));
+        sides[color].on('add', (piece) => this.$el.append( new MyPieceView({model: piece}).render().el));
       else
-        sides[color].on('add', (piece) => subViews.push(new PieceView({model: piece})) );
-
-      sides[color].on('pawnOnLastRank', (pawn) => {
-        this.$el.append( new PawnPromotionModalView({model: pawn}).render().el );
-      });
+        sides[color].on('add', (piece) => this.$el.append( new PieceView({model: piece}).render().el ));
     });
 
     sides['white'].push([
@@ -96,7 +90,34 @@ let GameUIView = Backbone.View.extend({
     if (myColor) {
       sides[myColor].turnFlag = myColor == 'white';
 
+      sides[myColor].on('pawnOnLastRank', (pawn) => {
+        this.$el.append( new PawnPromotionModalView({model: pawn}).render().el );
+      });
+
+      sides[myColor].on('promotion', (pawn, newPiece) => {
+        socket.emit('turn_promotion', {
+          from: {
+            x: pawn.previous('x'),
+            y: pawn.previous('y'),
+          },
+          to: {
+            x: pawn.attributes.x,
+            y: pawn.attributes.y
+          },
+          newPiece: newPiece.attributes.type
+        });
+      });
+
       sides[myColor].on('move', (piece) => {
+
+        if (piece.attributes.type == 'pawn') {
+          let lastRank = piece.attributes.color == 'white' ? 7 : 0;
+
+          if (piece.attributes.y == lastRank) {
+            return;
+          }
+        }
+
         socket.emit('turn_move', {
           from: {
             x: piece.previous('x'),
@@ -109,29 +130,51 @@ let GameUIView = Backbone.View.extend({
         });
       });
 
-      sides[myColor].models.find((piece) => piece.attributes.type == 'king').on('castling', (piece) => {
-        socket.emit('turn_move', {
-          from: {
-            x: piece.previous('x'),
-            y: piece.previous('y'),
-          },
-          to: {
-            x: piece.attributes.x,
-            y: piece.attributes.y
-          }
+
+      let rooks = sides[myColor].models.filter((piece) => piece.attributes.type == 'rook');
+
+      rooks.forEach( (rook) => {
+        rook.on('castling', (rook) => {
+          socket.emit('turn_castling', {
+            from: {
+              x: rook.previous('x'),
+              y: rook.previous('y'),
+            }
+          });
         });
       });
     };
 
     socket.on('player_move', (response) => {
       let movingPiece = sides[response.playerColor].getPieceAt(response.from.x, response.from.y);
+
       movingPiece.moveTo(response.to.x, response.to.y);
       if (myColor)
         sides[myColor].turnFlag = true;
     });
 
+    socket.on('player_castling', (response) => {
+      let kingNewX = response.from.x == 0 ? 2 : 6;
+      let king = sides[response.playerColor].models.find( (piece) => piece.attributes.type == 'king');
+
+      king.moveTo(kingNewX, king.attributes.y);
+      if (myColor)
+        sides[myColor].turnFlag = true;
+    });
+
+    socket.on('player_promotion', (response) => {
+      let pawn = sides[response.playerColor].getPieceAt(response.from.x, response.from.y);
+
+      pawn.moveTo(response.to.x, response.to.y);
+      if (myColor)
+        sides[myColor].turnFlag = true;
+
+      sides[response.playerColor].pawnPromotion(pawn, response.newPiece);
+    });
+
     socket.on('game_end', (response) => {
       let gameEndView = new GameEndModalView({model: response});
+
       this.$el.append( gameEndView.render().el );
       gameEndView.on('close', () => this.trigger('close') );
 

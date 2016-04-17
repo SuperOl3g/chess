@@ -20,7 +20,11 @@ let Pawn = Piece.extend({
     let deltaY = this.attributes.color == 'white' ? 1 : -1;
 
     // дополнительная обработка варианта с взятием на проходе
-    if ([1,-1].some( (deltaX) => this.attributes.x + deltaX == pos.x && this.attributes.y + deltaY == pos.y ))
+    if ([1,-1].some( (deltaX) =>  {
+        let piece = this.attributes.enemyCollection.getPieceAt(pos.x,pos.y - deltaY);
+        return (this.attributes.x + deltaX == pos.x && this.attributes.y + deltaY == pos.y
+          && piece && piece.attributes.type == 'pawn' && piece.previous('onStartPos') );
+      } ))
       return this.constructor.__super__.canBeMovedTo.call(this, pos, {x: pos.x, y: pos.y - deltaY});
 
     return this.constructor.__super__.canBeMovedTo.call(this, pos);
