@@ -76,6 +76,10 @@
   cursor: pointer;
   z-index: 10;
 
+  &:not(.piece--my) {
+    transition: all .25s;
+  }
+
   &:hover {
     z-index: 11;
   }

@@ -7,6 +7,7 @@ const TILE_SIZE = 40,
       FPS = 60;
 
 let MyPieceView = PieceView.extend({
+  className: () => 'piece piece--my',
 
   events: {
     'mousedown': 'onMouseDown'
