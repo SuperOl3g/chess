@@ -16,9 +16,15 @@ let PieceCollection = Backbone.Collection.extend({
       onStartPos: false
     });
     this.push(newPiece);
+    this.trigger('piece_add', newPiece);
     pawn.trigger('promotion', pawn, newPiece);
     pawn.destroy();
     return newPiece;
+  },
+
+  addPiece: function(piece) {
+    this.push(piece);
+    this.trigger('piece_add', piece);
   },
 
   getPieceAt: function (x, y) {

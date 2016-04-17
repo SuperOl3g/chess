@@ -12,6 +12,8 @@ let PieceView = Backbone.View.extend({
   initialize: function() {
     this.listenTo(this.model, 'move castling',  this.render);
     this.listenTo(this.model, 'taked promotion', this.remove);
+
+    debugger;
   },
 
   render: function() {

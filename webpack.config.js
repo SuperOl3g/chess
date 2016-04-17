@@ -25,7 +25,7 @@ module.exports = {
         }
       },
       {
-        test: /\.(ejs|html)/,
+        test: /\.(ejs\|html)/,
         loader: 'text'
       }
     ]

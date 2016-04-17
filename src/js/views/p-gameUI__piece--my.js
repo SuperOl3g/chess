@@ -34,39 +34,39 @@ let MyPieceView = PieceView.extend({
 
     $deck.append($indicators);
 
-    document.onmousemove = _.throttle( (e) => {
+    document.onmousemove = (e) => {
+      this.$el.css({
+        left: e.pageX - shiftX,
+        bottom: deckHeight - e.pageY - shiftY
+      });
+    };
+
+    document.onmouseup = (e) => {
+      document.onmousemove = null;
+      document.onmouseup = null;
+
+      $indicators.forEach( ($indicator) => $indicator.remove() );
+
+      // определяем координаты поля на странице
+      let deckOffset = $deck.offset();
+      deckOffset.top  += parseInt($deck.css('borderWidth'), 10);
+      deckOffset.left += parseInt($deck.css('borderWidth'), 10);
+
+      // определяем над какой клеткой мы сейчас находимся
+      let newX = Math.floor( (e.pageX - deckOffset.left) / TILE_SIZE),
+        newY = Math.floor( (deckHeight - e.pageY + deckOffset.top) / TILE_SIZE);
+
+
+      if( this.model.moveTo(newX, newY) ) {
+        this.model.collection.turnFlag = false;
+      } else {
+        // если позиция невалидна, возвращаем в исходное положение
         this.$el.css({
-          left: e.pageX - shiftX,
-          bottom: deckHeight - e.pageY - shiftY,
+          left: startCoords.left,
+          bottom: startCoords.bottom
         });
-
-        document.onmouseup = (e) => {
-          document.onmousemove = null;
-          document.onmouseup = null;
-
-          $indicators.forEach( ($indicator) => $indicator.remove() );
-
-          // определяем координаты поля на странице
-          let deckOffset = $deck.offset();
-          deckOffset.top  += parseInt($deck.css('borderWidth'), 10);
-          deckOffset.left += parseInt($deck.css('borderWidth'), 10);
-
-          // определяем над какой клеткой мы сейчас находимся
-          let newX = Math.floor( (e.pageX - deckOffset.left) / TILE_SIZE),
-              newY = Math.floor( (deckHeight - e.pageY + deckOffset.top) / TILE_SIZE);
-
-
-          if( this.model.moveTo(newX, newY) ) {
-            this.model.collection.turnFlag = false;
-          } else {
-            // если позиция невалидна, возвращаем в исходное положение
-            this.$el.css({
-              left: startCoords.left,
-              bottom: startCoords.bottom
-            });
-          }
-        }
-      }, 1000 / FPS)
+      }
+    }
   }
 });
 
