@@ -76,7 +76,7 @@
   cursor: pointer;
   z-index: 10;
 
-  &:not(.piece--my) {
+  &:not(.active) {
     transition: all .25s;
   }
 

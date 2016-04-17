@@ -10,11 +10,13 @@ let Logger = Backbone.View.extend({
 
   initialize: function (col1, col2) {
     [col1, col2].forEach( (collection) => {
-      this.listenTo(collection, 'taking', this.onTaking);
-      this.listenTo(collection, 'check',  this.onCheckOrMate.bind(this, 'check'));
-      this.listenTo(collection, 'mate',   this.onCheckOrMate.bind(this, 'mate'));
-      this.listenTo(collection, 'draw',   this.onDraw);
-      this.listenTo(collection, 'move',   this.onMove);
+      this.listenTo(collection, 'taking',    this.onTaking);
+      this.listenTo(collection, 'check',     this.onCheckOrMate.bind(this, 'check'));
+      this.listenTo(collection, 'mate',      this.onCheckOrMate.bind(this, 'mate'));
+      this.listenTo(collection, 'draw',      this.onDraw);
+      this.listenTo(collection, 'move',      this.onMove);
+      this.listenTo(collection, 'castling',  this.onCastling);
+      this.listenTo(collection, 'promotion', this.onPromotion);
     });
   },
 
@@ -30,6 +32,34 @@ let Logger = Backbone.View.extend({
         type: 'move',
         piece: piece.attributes,
         oldCoords: piece.previousAttributes(),
+        NtoS: NtoS
+      })
+    );
+    $logContent.stop().animate({scrollTop: $logContent.prop('scrollHeight')});
+  },
+
+  onCastling: function(piece) {
+    if (piece.attributes.type != 'rook')
+      return;
+
+    let $logContent = this.$el.find(".log__content");
+    $logContent.append(
+      _.template(msgTemplate)({
+        type: 'castling', 
+        color: piece.attributes.color,
+        castlingType: piece.previous('x') == 0 ? 'long' : 'short'
+      })
+    );
+    $logContent.stop().animate({scrollTop: $logContent.prop('scrollHeight')});
+  },
+
+  onPromotion: function(pawn, newPiece) {
+    let $logContent = this.$el.find(".log__content");
+    $logContent.append(
+      _.template(msgTemplate)({
+        type: 'promotion',
+        pawn: pawn.attributes,
+        newPieceType: newPiece.attributes.type,
         NtoS: NtoS
       })
     );

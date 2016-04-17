@@ -7,8 +7,6 @@ const TILE_SIZE = 40,
       FPS = 60;
 
 let MyPieceView = PieceView.extend({
-  className: () => 'piece piece--my',
-
   events: {
     'mousedown': 'onMouseDown'
   },
@@ -17,6 +15,8 @@ let MyPieceView = PieceView.extend({
     // если не наш ход, фигуру двигать нельзя
     if (!this.model.collection.turnFlag)
       return;
+
+    this.$el.addClass('active');
 
     let $deck = $('.deck'),
         deckHeight = $deck.height(),
@@ -45,6 +45,8 @@ let MyPieceView = PieceView.extend({
     document.onmouseup = (e) => {
       document.onmousemove = null;
       document.onmouseup = null;
+
+      this.$el.removeClass('active');
 
       $indicators.forEach( ($indicator) => $indicator.remove() );
 

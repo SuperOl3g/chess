@@ -59,16 +59,16 @@ let GameUIView = Backbone.View.extend({
     sides['white'].addPiece( new Pieces.Pawn   ({x:7, y:1, color:'white', enemyCollection: sides['black']}) );
     sides['white'].addPiece( new Pieces.Rook   ({x:0, y:0, color:'white', enemyCollection: sides['black']}) );
     sides['white'].addPiece( new Pieces.Rook   ({x:7, y:0, color:'white', enemyCollection: sides['black']}) );
-    sides['white'].addPiece( new Pieces.Knight ({x:1, y:4, color:'white', enemyCollection: sides['black']}) );
+    sides['white'].addPiece( new Pieces.Knight ({x:1, y:0, color:'white', enemyCollection: sides['black']}) );
     sides['white'].addPiece( new Pieces.Knight ({x:6, y:0, color:'white', enemyCollection: sides['black']}) );
     sides['white'].addPiece( new Pieces.Bishop ({x:2, y:0, color:'white', enemyCollection: sides['black']}) );
     sides['white'].addPiece( new Pieces.Bishop ({x:5, y:0, color:'white', enemyCollection: sides['black']}) );
     sides['white'].addPiece( new Pieces.Queen  ({x:3, y:0, color:'white', enemyCollection: sides['black']}) );
     sides['white'].addPiece( new Pieces.King   ({x:4, y:0, color:'white', enemyCollection: sides['black']}) );
-    
+
 
     sides['black'].addPiece( new Pieces.Pawn   ({x:0, y:6, color:'black', enemyCollection: sides['white']}) );
-    sides['black'].addPiece( new Pieces.Pawn   ({x:1, y:6, color:'black', enemyCollection: sides['white']}) );
+    sides['black'].addPiece( new Pieces.Pawn   ({x:1, y:3, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.Pawn   ({x:2, y:6, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.Pawn   ({x:3, y:6, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.Pawn   ({x:4, y:6, color:'black', enemyCollection: sides['white']}) );
@@ -77,11 +77,11 @@ let GameUIView = Backbone.View.extend({
     sides['black'].addPiece( new Pieces.Pawn   ({x:7, y:6, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.Rook   ({x:0, y:7, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.Rook   ({x:7, y:7, color:'black', enemyCollection: sides['white']}) );
-    sides['black'].addPiece( new Pieces.Knight ({x:1, y:7, color:'black', enemyCollection: sides['white']}) );
-    sides['black'].addPiece( new Pieces.Knight ({x:6, y:7, color:'black', enemyCollection: sides['white']}) );
-    sides['black'].addPiece( new Pieces.Bishop ({x:2, y:7, color:'black', enemyCollection: sides['white']}) );
-    sides['black'].addPiece( new Pieces.Bishop ({x:5, y:7, color:'black', enemyCollection: sides['white']}) );
-    sides['black'].addPiece( new Pieces.Queen  ({x:3, y:7, color:'black', enemyCollection: sides['white']}) );
+    // sides['black'].addPiece( new Pieces.Knight ({x:1, y:7, color:'black', enemyCollection: sides['white']}) );
+    // sides['black'].addPiece( new Pieces.Knight ({x:6, y:7, color:'black', enemyCollection: sides['white']}) );
+    // sides['black'].addPiece( new Pieces.Bishop ({x:2, y:7, color:'black', enemyCollection: sides['white']}) );
+    // sides['black'].addPiece( new Pieces.Bishop ({x:5, y:7, color:'black', enemyCollection: sides['white']}) );
+    // sides['black'].addPiece( new Pieces.Queen  ({x:3, y:7, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.King   ({x:4, y:7, color:'black', enemyCollection: sides['white']}) );
 
 

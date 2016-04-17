@@ -17,6 +17,23 @@
       move to <b>(<%= NtoS(piece.x) %><%= piece.y + 1 %>)</b>
     <% break;
 
+    case 'castling': %>
+      <span class="log__piece--<%= color %>">
+        <%= color %>
+      </span>
+      make a <%= castlingType %> castling
+    <% break;
+
+    case 'promotion': %>
+      <span class="log__piece--<%= pawn.color %>">
+        pawn(<%= NtoS(pawn.x) %><%= pawn.y + 1 %>)
+      </span>
+      is promoted to
+      <span class="log__piece--<%= pawn.color %>">
+        <%= newPieceType %>
+      </span>
+    <% break;
+
     case 'draw': %>
       <b>DRAW!!!</b>
     <% break;
