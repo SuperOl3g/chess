@@ -489,6 +489,9 @@ th {
   box-sizing: border-box;
   cursor: pointer;
   z-index: 10; }
+  .piece:not(.active) {
+    -webkit-transition: all .25s;
+    transition: all .25s; }
   .piece:hover {
     z-index: 11; }
 
