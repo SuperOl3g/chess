@@ -423,6 +423,11 @@ th {
   padding: 0;
 }
 
+.p-gameUI {
+  position: relative;
+  width: 100%;
+  height: 100vh; }
+
 .deck {
   width: 320px;
   height: 320px;
@@ -471,6 +476,16 @@ th {
         -ms-user-select: none;
             user-select: none;
     cursor: default; }
+  .deck.reversed, .deck.reversed .piece, .deck.reversed .deck__col-title, .deck.reversed .deck__row-title {
+    -webkit-transform: scaleY(-1);
+            transform: scaleY(-1); }
+  .deck.reversed .deck__col-titles {
+    top: 0;
+    bottom: auto;
+    -webkit-transform: translateY(-100%);
+            transform: translateY(-100%);
+    padding-bottom: 12px;
+    padding-top: 0; }
 
 .tileIndicator {
   position: absolute;
@@ -502,8 +517,6 @@ th {
 .log {
   width: 300px;
   padding: 20px;
-  -webkit-transform: translateY(100%);
-          transform: translateY(100%);
   bottom: 0;
   position: absolute; }
   .log__content {
