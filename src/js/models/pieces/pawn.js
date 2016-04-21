@@ -63,7 +63,9 @@ let Pawn = Piece.extend({
     if (this.attributes.onStartPos) {
       let newX = this.attributes.x,
           newY = this.attributes.y + 2 * deltaY;
-      if ( !this.attributes.enemyCollection.getPieceAt(newX, newY) )
+      if ( !this.attributes.enemyCollection.getPieceAt(newX, newY)
+        && !this.attributes.enemyCollection.getPieceAt(newX, newY - deltaY)
+        && !this.collection.getPieceAt(newX, newY - deltaY) )
         helpers.addValidPos(newX, newY, this, variants);
     }
     return variants;

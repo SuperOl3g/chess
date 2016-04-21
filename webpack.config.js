@@ -21,11 +21,11 @@ module.exports = {
         loader: 'babel',
         query: {
           presets: ['es2015'],
-          ignore:  ['jquery','backbone','underscore']
+          ignore:  ['jquery','backbone','underscore', 'three']
         }
       },
       {
-        test: /\.(ejs\|html)/,
+        test: /\.(ejs|html)$/,
         loader: 'text'
       }
     ]

@@ -35,6 +35,8 @@
     "backbone": "^1.2.3",
     "jquery": "^2.2.1",
     "socket.io-client": "^1.4.5",
+    "stats-js": "^1.0.0-alpha1",
+    "three": "^0.75.0",
     "underscore": "^1.8.3"
   }
 }

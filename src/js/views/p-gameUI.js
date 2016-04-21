@@ -10,18 +10,17 @@ import MyPieceView            from './p-gameUI__piece--my';
 import PawnPromotionModalView from './p-gameUI__promotion-modal';
 import GameEndModalView       from './p-gameUI__game-end-modal';
 
-import template from './../../templates/deck.ejs';
+import deckTemplate from './../../templates/p-gameUI.ejs';
 
 
 let subViews = [];
 
 let GameUIView = Backbone.View.extend({
 
-  className: 'deck',
-  template: _.template(template),
+  className: 'p-gameUI',
 
   events: {
-    'click .deck__close-btn' : 'onCloseBtnClick'
+    'click .gameUI__close-btn' : 'onCloseBtnClick'
   },
 
   onCloseBtnClick: function () {
@@ -30,12 +29,14 @@ let GameUIView = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.prepend( this.template() );
     return this;
   },
 
   initialize: function (myColor) {
     let sides = {};
+
+    this.$el.append(_.template(deckTemplate)());
+
 
     sides['white'] = new PieceCollection();
     sides['black'] = new PieceCollection();
@@ -44,9 +45,9 @@ let GameUIView = Backbone.View.extend({
 
     Object.keys(sides).forEach( (color) => {
       if (color == myColor)
-        sides[color].on('piece_add', (piece) => this.$el.append( new MyPieceView({model: piece}).render().el));
+        sides[color].on('piece_add', (piece) => this.$el.find('.deck__pieces').append( new MyPieceView({model: piece}).render().el));
       else
-        sides[color].on('piece_add', (piece) => this.$el.append( new PieceView({model: piece}).render().el ));
+        sides[color].on('piece_add', (piece) => this.$el.find('.deck__pieces').append( new PieceView({model: piece}).render().el ));
     });
 
     sides['white'].addPiece( new Pieces.Pawn   ({x:0, y:1, color:'white', enemyCollection: sides['black']}) );
@@ -68,7 +69,7 @@ let GameUIView = Backbone.View.extend({
 
 
     sides['black'].addPiece( new Pieces.Pawn   ({x:0, y:6, color:'black', enemyCollection: sides['white']}) );
-    sides['black'].addPiece( new Pieces.Pawn   ({x:1, y:3, color:'black', enemyCollection: sides['white']}) );
+    sides['black'].addPiece( new Pieces.Pawn   ({x:1, y:6, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.Pawn   ({x:2, y:6, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.Pawn   ({x:3, y:6, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.Pawn   ({x:4, y:6, color:'black', enemyCollection: sides['white']}) );
@@ -77,11 +78,11 @@ let GameUIView = Backbone.View.extend({
     sides['black'].addPiece( new Pieces.Pawn   ({x:7, y:6, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.Rook   ({x:0, y:7, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.Rook   ({x:7, y:7, color:'black', enemyCollection: sides['white']}) );
-    // sides['black'].addPiece( new Pieces.Knight ({x:1, y:7, color:'black', enemyCollection: sides['white']}) );
-    // sides['black'].addPiece( new Pieces.Knight ({x:6, y:7, color:'black', enemyCollection: sides['white']}) );
-    // sides['black'].addPiece( new Pieces.Bishop ({x:2, y:7, color:'black', enemyCollection: sides['white']}) );
-    // sides['black'].addPiece( new Pieces.Bishop ({x:5, y:7, color:'black', enemyCollection: sides['white']}) );
-    // sides['black'].addPiece( new Pieces.Queen  ({x:3, y:7, color:'black', enemyCollection: sides['white']}) );
+    sides['black'].addPiece( new Pieces.Knight ({x:1, y:7, color:'black', enemyCollection: sides['white']}) );
+    sides['black'].addPiece( new Pieces.Knight ({x:6, y:7, color:'black', enemyCollection: sides['white']}) );
+    sides['black'].addPiece( new Pieces.Bishop ({x:2, y:7, color:'black', enemyCollection: sides['white']}) );
+    sides['black'].addPiece( new Pieces.Bishop ({x:5, y:7, color:'black', enemyCollection: sides['white']}) );
+    sides['black'].addPiece( new Pieces.Queen  ({x:3, y:7, color:'black', enemyCollection: sides['white']}) );
     sides['black'].addPiece( new Pieces.King   ({x:4, y:7, color:'black', enemyCollection: sides['white']}) );
 
 
