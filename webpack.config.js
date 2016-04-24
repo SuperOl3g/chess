@@ -32,10 +32,6 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.NoErrorsPlugin(),
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: "vendor",
-    //   filename: "vendor.js"
-    // }),
+    new webpack.NoErrorsPlugin()
   ]
 };

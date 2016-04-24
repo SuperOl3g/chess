@@ -29,7 +29,8 @@ const paths = {
   spriteSvg:    'src/sprite-svg/*.svg',
   html:         'src/*.html',
   templates:    'src/templates/*',
-  favicons:     'src/favicons/*'
+  favicons:     'src/favicons/*',
+  models:       'src/models/*'
 };
 
 gulp.task('default', (cb) => {
@@ -49,7 +50,7 @@ gulp.task('clean', () => {
 });
 
 gulp.task('build', (cb) => {
-  seq('clean', ['js', 'sass', 'favicons' ,'html', 'img', 'sprite-svg'], cb);
+  seq('clean', ['js', 'sass', 'favicons', 'models', 'html', 'img', 'sprite-svg'], cb);
 });
 
 gulp.task('watch', ['build'], () => {
@@ -57,6 +58,7 @@ gulp.task('watch', ['build'], () => {
   watch( paths.templates, () => { seq('js');         });
   watch( paths.html,      () => { seq('html');       });
   watch( paths.favicons,  () => { seq('favicons');   });
+  watch( paths.models,    () => { seq('models');     });
   watch( paths.sass,      () => { seq('sass');       });
   watch( paths.img,       () => { seq('img');        });
   watch( paths.spriteSvg, () => { seq('sprite-svg'); });
@@ -71,6 +73,12 @@ gulp.task('html', () => {
 gulp.task('favicons', () => {
   return gulp.src(paths.favicons)
     .pipe( gulp.dest('./dist/favicons') )
+    .pipe( browserSync.stream() );
+});
+
+gulp.task('models', () => {
+  return gulp.src(paths.models)
+    .pipe( gulp.dest('./dist/models') )
     .pipe( browserSync.stream() );
 });
 
