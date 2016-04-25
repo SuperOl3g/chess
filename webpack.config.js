@@ -19,9 +19,9 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel',
+        exclude: /node_modules/,
         query: {
-          presets: ['es2015'],
-          ignore:  ['jquery','backbone','underscore']
+          presets: ['es2015']
         }
       },
       {
