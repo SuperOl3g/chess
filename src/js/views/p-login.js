@@ -32,7 +32,7 @@ let LoginView = Backbone.View.extend({
   render: function() {
     this.$el.html( this.template({
       nickName: '',
-      server: '127.0.0.1',
+      server: '185.81.113.164',
       port: 3056
     }));
     return this;
